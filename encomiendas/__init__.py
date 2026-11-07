@@ -61,16 +61,20 @@ def create_app(config=None):
     if not app.config["SECRET_KEY"]:
         app.config["SECRET_KEY"] = clave_local(Path(app.instance_path))
     crear_uow = lambda: UnidadTrabajoSqlite(app.config["DATABASE"], app.config.get("DB_TIMEOUT", 5))
+    from .aplicacion.operaciones_anteriores import ServicioOperaciones
     app.extensions["servicios"] = dict(
         acceso=ServicioAcceso(crear_uow),
         registro=ServicioRegistroEncomienda(crear_uow, politica=app.config["POLITICA_PAQUETE"]),
         seguimiento=ServicioSeguimiento(crear_uow),
         viajes=ServicioViajes(crear_uow),
+        operaciones=ServicioOperaciones(crear_uow),
         consultas=ServicioConsultas(crear_uow),
     )
     from .presentacion.rutas import web, csrf_token
 
     app.register_blueprint(web)
+    from .presentacion.operaciones_anteriores import operaciones
+    app.register_blueprint(operaciones, url_prefix="/operaciones")
     app.jinja_env.globals.update(
         csrf_token=csrf_token,
         estados={k: c.etiqueta for k, c in TIPOS_ESTADO.items()},
