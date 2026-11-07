@@ -28,6 +28,7 @@
              href="{{ url_for('web.viajes') }}">Viajes y despachos</a>
           <a class="{{ 'active' if request.endpoint=='web.ventas' }}"
              href="{{ url_for('web.ventas') }}">Ventas disponibles</a>
+          <a class="{{ 'active' if request.endpoint and request.endpoint.startswith('operaciones.') }}" href="{{ url_for('operaciones.inicio') }}">Programar viajes y pagos</a>
         </nav>
         <div class="sidebar-bottom">
           <span class="environment">ENTORNO ACADÉMICO</span>
