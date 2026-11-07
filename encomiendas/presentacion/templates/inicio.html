@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block titulo %}Resumen operativo{% endblock %}
+{% block contenido %}
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">OPERACIONES / VISTA GENERAL</p>
+      <h1>Resumen operativo</h1>
+      <p class="muted">Registro, despacho y entrega de encomiendas.</p>
+    </div>
+    <a class="button" href="{{ url_for('web.nueva') }}">Registrar encomienda</a>
+  </div>
+  <div class="metrics">
+    {% for codigo,nombre,nota in [('RECIBIDO','Por despachar','Guías recibidas en origen'),('EN_TRANSITO','En tránsito','En traslado a destino'),('EN_DESTINO','Por entregar','Disponibles en destino'),('ENTREGADO','Entregadas','Con constancia de recepción')] %}
+      <a class="metric" href="{{ url_for('web.guias',estado=codigo) }}">
+        <span>{{ nombre }}</span>
+        <strong>{{ indicadores.get(codigo,0) }}</strong>
+        <small>{{ nota }}</small>
+      </a>
+    {% endfor %}
+  </div>
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <h2>Últimas guías registradas</h2>
+        <p>{{ total }} guías en tu ámbito de consulta</p>
+      </div>
+      <a href="{{ url_for('web.guias') }}">Consultar todas</a>
+    </div>
+    {% include "_tabla_guias.html" %}
+  </section>
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <h2>Capacidad para nuevos envíos</h2>
+        <p>Viajes que mantienen abierta la recepción de carga</p>
+      </div>
+      <a href="{{ url_for('web.viajes') }}">Gestionar viajes</a>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Viaje</th>
+            <th>Trayecto</th>
+            <th>Peso disponible</th>
+            <th>Volumen disponible</th>
+            <th>Salida</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in viajes if v.recibe_carga and v.activo %}
+            <tr>
+              <td class="reference">
+                {{ v.codigo }}<small> {{ v.placa }}</small>
+              </td>
+              <td>{{ v.origen }} / {{ v.destino }}</td>
+              <td>{{ '%.3f'|format((v.peso_maximo_g-v.peso_ocupado_g)/1000) }} kg</td>
+              <td>{{ '%.3f'|format((v.volumen_maximo_cm3-v.volumen_ocupado_cm3)/1000000) }} m³</td>
+              <td>
+                <span class="tag">{{ 'Autorizada' if v.salida_autorizada else 'Por autorizar' }}</span>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5" class="empty">No hay viajes abiertos para recibir carga.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

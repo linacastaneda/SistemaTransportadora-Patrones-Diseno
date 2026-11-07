@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titulo %}Operación no disponible{% endblock %}
+{% block contenido %}
+  <section class="error-page">
+    <p class="eyebrow">{{ error.codigo }}</p>
+    <h1>No se pudo completar la operación</h1>
+    <p>{{ error.mensaje }}</p>
+    <a class="button"
+       href="{{ url_for('web.inicio') if g.actor else url_for('web.login') }}">
+    {{ 'Volver al resumen' if g.actor else 'Ir al acceso' }}</a>
+  </section>
+{% endblock %}
