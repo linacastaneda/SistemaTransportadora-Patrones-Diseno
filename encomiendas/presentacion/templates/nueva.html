@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% from 'macros.html' import csrf,campo %}
+{% block titulo %}Registrar encomienda{% endblock %}
+{% block contenido %}
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">OPERACIONES / NUEVO REGISTRO</p>
+      <h1>Registrar encomienda</h1>
+      <p class="muted">Asocia la venta y verifica el viaje antes de confirmar la guía.</p>
+    </div>
+    <a class="button secondary" href="{{ url_for('web.guias') }}">Volver a guías</a>
+  </div>
+  {% if error %}
+    <div class="alert alert-error" role="alert">
+      <strong>No se pudo registrar la encomienda.</strong>
+      <br>
+      {{ error.mensaje }}
+    </div>
+  {% endif %}
+  <div class="form-layout">
+    <form method="post" class="registration" id="form-registro">
+      {{ csrf() }}<input type="hidden" name="token" value="{{ valores.get('token', '') }}">
+      <section class="panel form-panel">
+        <h2>
+          <span class="step">1</span> Venta y trayecto
+        </h2>
+        <div class="form-grid">
+          <label class="field span-2">
+            <span>Venta del servicio</span>
+            <select name="venta_id" id="venta_id" required>
+              <option value="">Selecciona una venta</option>
+              {% for v in disponibles %}
+                <option value="{{ v.id }}"
+                        {{ 'selected' if valores.get('venta_id', '')|string==v.id|string }}>
+                  {{ v.referencia }} · {{ v.remitente_nombre }} · {{ v.total_centavos|dinero }}{{ ' · Pago pendiente' if v.pagado_centavos!=v.total_centavos }}
+                </option>
+              {% endfor %}
+            </select>
+            <small>Seleccionar una venta carga sus personas y trayecto. Revisa los datos antes de enviar.</small>
+          </label>
+          {% for nombre,etiqueta in [('origen_id','Sucursal de origen'),('destino_id','Sucursal de destino')] %}
+            <label class="field">
+              <span>{{ etiqueta }}</span>
+              <select name="{{ nombre }}" id="{{ nombre }}" required>
+                <option value="">Selecciona una sucursal</option>
+                {% for s in sucursales %}
+                  <option value="{{ s.id }}"
+                          {{ 'selected' if valores.get(nombre,'')|string==s.id|string }}>
+                    {{ s.nombre }}
+                  </option>
+                {% endfor %}
+              </select>
+            </label>
+          {% endfor %}
+          <label class="field span-2">
+            <span>Viaje asignado</span>
+            <select name="viaje_id" id="viaje_id" required>
+              <option value="">Selecciona un viaje</option>
+              {% for v in viajes if v.recibe_carga and v.activo %}
+                <option value="{{ v.id }}"
+                        {{ 'selected' if valores.get('viaje_id', '')|string==v.id|string }}>
+                  {{ v.codigo }} · {{ v.origen }} / {{ v.destino }} · {{ '%.3f'|format((v.peso_maximo_g-v.peso_ocupado_g)/1000) }} kg libres
+                </option>
+              {% endfor %}
+            </select>
+            <small>El cupo se vuelve a comprobar al confirmar la guía.</small>
+          </label>
+        </div>
+      </section>
+      <section class="panel form-panel">
+        <h2>
+          <span class="step">2</span> Personas y entrega
+        </h2>
+        <div class="form-grid">
+          {{ campo('remitente_nombre','Nombre o razón social del remitente',valores,extra='required minlength="3" maxlength="120"') }}{{ campo('destinatario_nombre','Nombre o razón social del destinatario',valores,extra='required minlength="3" maxlength="120"') }}
+          {{ campo('remitente_documento','Documento del remitente',valores,extra='required maxlength="24"') }}{{ campo('destinatario_documento','Documento del destinatario',valores,extra='required maxlength="24"') }}
+          {{ campo('remitente_telefono','Teléfono del remitente',valores,'tel','required maxlength="25"') }}{{ campo('destinatario_telefono','Teléfono del destinatario',valores,'tel','required maxlength="25"') }}
+          <label class="field span-2">
+            <span>Dirección de entrega</span>
+            <input name="direccion_entrega"
+                   id="direccion_entrega"
+                   value="{{ valores.get('direccion_entrega', '') }}"
+                   required
+                   minlength="5"
+                   maxlength="180">
+          </label>
+        </div>
+      </section>
+      <section class="panel form-panel">
+        <h2>
+          <span class="step">3</span> Características del paquete
+        </h2>
+        <div class="form-grid">
+          <label class="field span-2">
+            <span>Descripción del contenido</span>
+            <input name="descripcion"
+                   value="{{ valores.get('descripcion', '') }}"
+                   required
+                   minlength="3"
+                   maxlength="250"
+                   placeholder="Ejemplo: libros y material de oficina">
+          </label>
+          {{ campo('peso_kg','Peso (kg)',valores,'number','required min="0.001" max="' ~ (politica.peso_maximo_g/1000) ~ '" step="0.001"') }}{{ campo('valor_declarado','Valor declarado (COP)',valores,'number','required min="0" max="' ~ (politica.valor_maximo_centavos/100) ~ '" step="0.01"') }}
+          <div class="dimensions span-2">
+            {{ campo('largo_cm','Largo (cm)',valores,'number','required min="1" max="' ~ politica.dimension_maxima_cm ~ '" step="1"') }}{{ campo('ancho_cm','Ancho (cm)',valores,'number','required min="1" max="' ~ politica.dimension_maxima_cm ~ '" step="1"') }}{{ campo('alto_cm','Alto (cm)',valores,'number','required min="1" max="' ~ politica.dimension_maxima_cm ~ '" step="1"') }}
+          </div>
+          <label class="field span-2">
+            <span>Observaciones <small>(opcional)</small>
+            </span>
+            <textarea name="observaciones" maxlength="500" rows="3">
+{{ valores.get('observaciones','') }}</textarea>
+          </label>
+        </div>
+        <div class="form-actions">
+          <p>La guía confirmada conserva los datos del registro.</p>
+          <button class="button" type="submit">Confirmar registro</button>
+        </div>
+      </section>
+    </form>
+    <aside class="registration-aside">
+      <section class="panel summary-box">
+        <p class="eyebrow">ANTES DE CONFIRMAR</p>
+        <h2>Revisión de la solicitud</h2>
+        <ol class="check-list">
+          {% if error and error.pasos %}
+            {% for paso in error.pasos %}
+              <li class="{{ 'check-ok' if paso.aprobado else 'check-error' }}">
+                <strong>{{ paso.nombre }}</strong>
+                <small>{{ 'Conforme' if paso.aprobado else paso.mensaje }}</small>
+              </li>
+            {% endfor %}
+          {% else %}
+            <li>Personas y contacto</li>
+            <li>Características del paquete</li>
+            <li>Trayecto y viaje</li>
+            <li>Venta y pago</li>
+            <li>Capacidad de carga</li>
+          {% endif %}
+        </ol>
+        <p class="muted">Si una revisión no es conforme, la operación se detiene y no se genera la guía.</p>
+      </section>
+      <section class="aside-note">
+        <h3>Un registro por venta</h3>
+        <p>La venta debe estar pagada y disponible. El número de guía se asigna después de completar las revisiones.</p>
+        <a href="{{ url_for('web.ventas') }}">Consultar ventas</a>
+      </section>
+    </aside>
+  </div>
+  <script type="application/json" id="ventas-datos">{{ disponibles|tojson }}</script>
+{% endblock %}
