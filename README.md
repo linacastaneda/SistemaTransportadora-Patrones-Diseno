@@ -14,6 +14,36 @@ Aplicación académica **Python 3.11 / Flask / SQLite**, ampliación de la imple
 
 La aplicación Python **no es una conversión literal de todos los módulos Java**: se incorporan procesos compatibles sin sustituir las funcionalidades existentes. Los patrones creacionales de la primera entrega quedan como antecedente, no se ejecutan nuevamente aquí.
 
+## Organización actual: MVC / tres capas
+
+La aplicación se ordena en **Presentación (Vista y Controlador Flask)**, **Negocio (casos de uso, entidades y patrones)** y **Datos (repositorios SQLite)**. **Cada clase dispone de un archivo Python propio**; los archivos de compatibilidad solo reexportan las clases.
+
+- **[Ver arquitectura y mapa clase → archivo](docs/ARQUITECTURA_MVC.md)**.
+- **[Ver diagramas de clases y actividades](docs/DIAGRAMAS_UML.md)**.
+- **[Ver pruebas de arquitectura](tests/test_arquitectura_mvc.py)**.
+
+```text
+encomiendas/
+├── presentacion/                 # Vistas HTML y controladores Flask
+│   ├── rutas.py
+│   ├── operaciones_anteriores.py
+│   ├── templates/
+│   └── static/
+├── aplicacion/                   # Capa de negocio
+│   ├── casos_uso/                # Cada servicio en su archivo
+│   ├── puertos/                  # Contratos de repositorios
+│   └── utilidades.py
+├── dominio/                      # Modelo y patrones de comportamiento
+│   ├── entidades/                # GuiaEnvio, Viaje, Venta, etc.
+│   └── patrones/
+│       ├── cadena/               # 6 clases + fabrica.py
+│       └── estado/               # 5 clases
+└── persistencia/                 # Capa de datos
+    ├── repositorios/             # Adaptadores individuales
+    ├── sqlite_base.py
+    └── esquema.sql
+```
+
 ## Cómo funciona la integración de Chain y State
 
 1. El operador selecciona una venta de encomienda y un viaje con capacidad.
