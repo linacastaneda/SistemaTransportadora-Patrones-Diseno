@@ -1,7 +1,7 @@
 name: Pruebas de la aplicación Flask
 on:
   push:
-    branches: [main, refactor-mvc-una-clase-por-archivo]
+    branches: [main, arquitectura-tres-capas]
   pull_request:
 jobs:
   pruebas:

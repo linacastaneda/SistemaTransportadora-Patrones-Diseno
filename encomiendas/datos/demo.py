@@ -5,8 +5,8 @@ from dataclasses import asdict
 
 from werkzeug.security import generate_password_hash
 
-from encomiendas.dominio.cadena import crear_cadena
-from encomiendas.dominio.modelos import (
+from encomiendas.aplicacion.dominio.cadena import crear_cadena
+from encomiendas.aplicacion.dominio.modelos import (
     ContextoRegistro,
     ContextoSeguimiento,
     PoliticaPaquete,

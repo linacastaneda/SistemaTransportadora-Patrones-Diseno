@@ -15,9 +15,9 @@ from flask import (
     url_for,
 )
 
-from encomiendas.dominio.errores import ErrorNegocio
-from encomiendas.dominio.estados import TIPOS_ESTADO
-from encomiendas.dominio.modelos import Receptor
+from encomiendas.aplicacion.dominio.errores import ErrorNegocio
+from encomiendas.aplicacion.dominio.estados import TIPOS_ESTADO
+from encomiendas.aplicacion.dominio.modelos import Receptor
 from .formularios import entero, leer_solicitud
 
 web = Blueprint("web", __name__)

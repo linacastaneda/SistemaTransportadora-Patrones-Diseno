@@ -8,9 +8,9 @@ import re
 
 from werkzeug.security import check_password_hash, generate_password_hash
 
-from encomiendas.dominio.cadena import crear_cadena
-from encomiendas.dominio.errores import ErrorNegocio
-from encomiendas.dominio.modelos import (
+from encomiendas.aplicacion.dominio.cadena import crear_cadena
+from encomiendas.aplicacion.dominio.errores import ErrorNegocio
+from encomiendas.aplicacion.dominio.modelos import (
     ContextoRegistro,
     ContextoSeguimiento,
     PoliticaPaquete,

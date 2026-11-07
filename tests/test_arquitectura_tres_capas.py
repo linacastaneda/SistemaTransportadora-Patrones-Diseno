@@ -21,11 +21,11 @@ def test_una_clase_por_archivo():
 
 
 def test_clases_de_patrones_separadas():
-    from encomiendas.dominio.patrones.cadena import (
+    from encomiendas.aplicacion.dominio.patrones.cadena import (
         validador_envio, validar_personas, validar_paquete,
         validar_trayecto, validar_pago, validar_capacidad,
     )
-    from encomiendas.dominio.patrones.estado import (
+    from encomiendas.aplicacion.dominio.patrones.estado import (
         estado_envio, recibido, en_transito, en_destino, entregado,
     )
     cadena = [validador_envio.ValidadorEnvio, validar_personas.ValidarPersonas,
@@ -40,12 +40,12 @@ def test_clases_de_patrones_separadas():
 
 
 def test_fachadas_siguen_apuntando_a_las_mismas_clases():
-    from encomiendas.dominio.modelos import GuiaEnvio
-    from encomiendas.dominio.entidades.guia_envio import GuiaEnvio as GuiaNueva
-    from encomiendas.dominio.cadena import ValidarPaquete
-    from encomiendas.dominio.patrones.cadena.validar_paquete import ValidarPaquete as ValidadorNuevo
-    from encomiendas.dominio.estados import Recibido
-    from encomiendas.dominio.patrones.estado.recibido import Recibido as EstadoNuevo
+    from encomiendas.aplicacion.dominio.modelos import GuiaEnvio
+    from encomiendas.aplicacion.dominio.entidades.guia_envio import GuiaEnvio as GuiaNueva
+    from encomiendas.aplicacion.dominio.cadena import ValidarPaquete
+    from encomiendas.aplicacion.dominio.patrones.cadena.validar_paquete import ValidarPaquete as ValidadorNuevo
+    from encomiendas.aplicacion.dominio.estados import Recibido
+    from encomiendas.aplicacion.dominio.patrones.estado.recibido import Recibido as EstadoNuevo
     assert GuiaEnvio is GuiaNueva
     assert ValidarPaquete is ValidadorNuevo
     assert Recibido is EstadoNuevo

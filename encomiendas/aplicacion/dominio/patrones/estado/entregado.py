@@ -2,7 +2,7 @@
 from __future__ import annotations
 import re
 from .estado_envio import EstadoEnvio
-from encomiendas.dominio.errores import ErrorNegocio
+from encomiendas.aplicacion.dominio.errores import ErrorNegocio
 
 class Entregado(EstadoEnvio):
     codigo, etiqueta, acciones = "ENTREGADO", "Entregado", ()

@@ -3,7 +3,7 @@
 **Sistema de transportes, pasajeros y encomiendas** — versión integrada Python 3 / Flask / SQLite.  
 Diagramas monocromáticos, reproducibles y editables en Mermaid. Dos patrones se implementan en código (**Chain of Responsibility y State**); otros dos se **diseñan, pero no se programan** (**Iterator y Memento**). Los nombres de los diagramas implementados corresponden a las clases reales. Se omiten en las firmas de Python los tipos no anotados.
 
-## 1. Arquitectura de tres capas / MVC
+## 1. Arquitectura de tres capas / tres capas
 
 ```mermaid
 %%{init: {"theme": "neutral"}}%%
@@ -503,7 +503,7 @@ classDiagram
 
 ## 7. Observaciones de consistencia
 
-- **Solo dos patrones implementados:** `encomiendas/dominio/cadena.py` y `encomiendas/dominio/estados.py`.
+- **Solo dos patrones implementados:** `encomiendas/aplicacion/dominio/cadena.py` y `encomiendas/aplicacion/dominio/estados.py`.
 - **Iterator y Memento no están en el código ejecutable:** son diseños propuestos coherentes con las mismas entidades y repositorios.
 - **Coexistencia:** la cadena crea la guía en RECIBIDO; State continúa el ciclo de la misma guía, identificada con `id` y `numero`.
 - **Capas:** plantilla y controlador HTTP no realizan SQL; los servicios negocian la transacción; repositorios SQLite la almacenan.

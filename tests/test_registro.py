@@ -5,9 +5,9 @@ import threading
 
 import pytest
 
-from encomiendas.dominio.cadena import ValidarPersonas, ValidarPaquete
-from encomiendas.dominio.errores import ErrorNegocio
-from encomiendas.persistencia.sqlite import SqliteEventos
+from encomiendas.aplicacion.dominio.cadena import ValidarPersonas, ValidarPaquete
+from encomiendas.aplicacion.dominio.errores import ErrorNegocio
+from encomiendas.datos.sqlite import SqliteEventos
 
 
 def test_registro_atomico_con_traza_y_estado_inicial(registrar, servicios, uow):

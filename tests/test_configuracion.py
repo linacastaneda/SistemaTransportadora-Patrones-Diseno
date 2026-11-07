@@ -3,9 +3,9 @@ import secrets
 import pytest
 
 from encomiendas import create_app
-from encomiendas.dominio.errores import ErrorNegocio
-from encomiendas.dominio.modelos import PoliticaPaquete
-from encomiendas.persistencia.sqlite import UnidadTrabajoSqlite
+from encomiendas.aplicacion.dominio.errores import ErrorNegocio
+from encomiendas.aplicacion.dominio.modelos import PoliticaPaquete
+from encomiendas.datos.sqlite import UnidadTrabajoSqlite
 from encomiendas.aplicacion.servicios import ServicioRegistroEncomienda
 
 

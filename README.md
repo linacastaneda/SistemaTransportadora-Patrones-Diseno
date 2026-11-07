@@ -14,32 +14,33 @@ Aplicación académica **Python 3.11 / Flask / SQLite**, ampliación de la imple
 
 La aplicación Python **no es una conversión literal de todos los módulos Java**: se incorporan procesos compatibles sin sustituir las funcionalidades existentes. Los patrones creacionales de la primera entrega quedan como antecedente, no se ejecutan nuevamente aquí.
 
-## Organización actual: MVC / tres capas
+## Arquitectura de tres capas
 
-La aplicación se ordena en **Presentación (Vista y Controlador Flask)**, **Negocio (casos de uso, entidades y patrones)** y **Datos (repositorios SQLite)**. **Cada clase dispone de un archivo Python propio**; los archivos de compatibilidad solo reexportan las clases.
+La aplicación utiliza **tres capas diferenciadas por responsabilidad**: `presentacion` (interfaz y recepción de solicitudes), `aplicacion` (casos de uso, entidades y patrones de comportamiento) y `datos` (persistencia y repositorios SQLite). **Cada clase tiene su propio archivo Python**.
 
-- **[Ver arquitectura y mapa clase → archivo](docs/ARQUITECTURA_MVC.md)**.
-- **[Ver diagramas de clases y actividades](docs/DIAGRAMAS_UML.md)**.
-- **[Ver pruebas de arquitectura](tests/test_arquitectura_mvc.py)**.
+- **[Arquitectura de tres capas y mapa clase → archivo](docs/ARQUITECTURA_TRES_CAPAS.md)**.
+- **[Diagramas de clases y actividades en blanco y negro](docs/DIAGRAMAS_UML.md)**.
+- **[Pruebas de la estructura y las importaciones](tests/test_arquitectura_tres_capas.py)**.
 
 ```text
 encomiendas/
-├── presentacion/                 # Vistas HTML y controladores Flask
+├── presentacion/                 # CAPA 1: interfaz y rutas web Flask
 │   ├── rutas.py
 │   ├── operaciones_anteriores.py
+│   ├── formularios.py
 │   ├── templates/
 │   └── static/
-├── aplicacion/                   # Capa de negocio
-│   ├── casos_uso/                # Cada servicio en su archivo
-│   ├── puertos/                  # Contratos de repositorios
+├── aplicacion/                   # CAPA 2: lógica de negocio
+│   ├── casos_uso/                # Servicios, una clase por archivo
+│   ├── puertos/                  # Interfaces de repositorios
+│   ├── dominio/
+│   │   ├── entidades/            # GuiaEnvio, Viaje, Venta, etc.
+│   │   └── patrones/
+│   │       ├── cadena/           # Chain of Responsibility
+│   │       └── estado/           # State
 │   └── utilidades.py
-├── dominio/                      # Modelo y patrones de comportamiento
-│   ├── entidades/                # GuiaEnvio, Viaje, Venta, etc.
-│   └── patrones/
-│       ├── cadena/               # 6 clases + fabrica.py
-│       └── estado/               # 5 clases
-└── persistencia/                 # Capa de datos
-    ├── repositorios/             # Adaptadores individuales
+└── datos/                        # CAPA 3: almacenamiento SQLite
+    ├── repositorios/             # Clases de acceso a datos
     ├── sqlite_base.py
     └── esquema.sql
 ```
@@ -52,13 +53,13 @@ encomiendas/
 4. State gobierna **la misma guía**: `RECIBIDO → EN_TRANSITO → EN_DESTINO → ENTREGADO`.
 5. Los estados inválidos se rechazan; el historial, la versión y las reglas de concurrencia se conservan en SQLite.
 
-## Arquitectura de tres capas / MVC
+## Correspondencia de archivos por capa
 
 | Capa | Archivos |
 |---|---|
-| Presentación / Controlador | `encomiendas/presentacion/rutas.py`, `operaciones_anteriores.py`, plantillas HTML |
-| Negocio / Modelo | `encomiendas/aplicacion/servicios.py`, `operaciones_anteriores.py`, `encomiendas/dominio/` |
-| Datos | `encomiendas/persistencia/sqlite.py`, `operaciones_anteriores.py`, `esquema.sql` |
+| Presentación | `encomiendas/presentacion/rutas.py`, `operaciones_anteriores.py`, plantillas HTML |
+| Aplicación / negocio | `encomiendas/aplicacion/servicios.py`, `operaciones_anteriores.py`, `encomiendas/aplicacion/dominio/` |
+| Datos | `encomiendas/datos/sqlite.py`, `operaciones_anteriores.py`, `esquema.sql` |
 
 ## Instalar y ejecutar
 
