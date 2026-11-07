@@ -1,7 +1,7 @@
 from decimal import Decimal, InvalidOperation
 
-from encomiendas.dominio.errores import ErrorNegocio
-from encomiendas.dominio.modelos import SolicitudRegistro
+from encomiendas.aplicacion.dominio.errores import ErrorNegocio
+from encomiendas.aplicacion.dominio.modelos import SolicitudRegistro
 
 
 def entero(valor, etiqueta):

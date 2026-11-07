@@ -15,11 +15,11 @@ from .aplicacion.servicios import (
     ServicioViajes,
     ServicioConsultas,
 )
-from .dominio.errores import ErrorNegocio
-from .dominio.estados import TIPOS_ESTADO
-from .dominio.modelos import PoliticaPaquete
-from .persistencia.sqlite import UnidadTrabajoSqlite, inicializar
-from .persistencia.demo import sembrar_demo
+from .aplicacion.dominio.errores import ErrorNegocio
+from .aplicacion.dominio.estados import TIPOS_ESTADO
+from .aplicacion.dominio.modelos import PoliticaPaquete
+from .datos.sqlite import UnidadTrabajoSqlite, inicializar
+from .datos.demo import sembrar_demo
 
 
 def clave_local(carpeta):

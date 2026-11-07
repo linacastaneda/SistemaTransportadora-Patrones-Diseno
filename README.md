@@ -18,7 +18,7 @@ La aplicación Python **no es una conversión literal de todos los módulos Java
 
 La aplicación se ordena en **Presentación (Vista y Controlador Flask)**, **Negocio (casos de uso, entidades y patrones)** y **Datos (repositorios SQLite)**. **Cada clase dispone de un archivo Python propio**; los archivos de compatibilidad solo reexportan las clases.
 
-- **[Ver arquitectura y mapa clase → archivo](docs/ARQUITECTURA_MVC.md)**.
+- **[Ver arquitectura y mapa clase → archivo](docs/ARQUITECTURA_TRES_CAPAS.md)**.
 - **[Ver diagramas de clases y actividades](docs/DIAGRAMAS_UML.md)**.
 - **[Ver pruebas de arquitectura](tests/test_arquitectura_mvc.py)**.
 
@@ -57,8 +57,8 @@ encomiendas/
 | Capa | Archivos |
 |---|---|
 | Presentación / Controlador | `encomiendas/presentacion/rutas.py`, `operaciones_anteriores.py`, plantillas HTML |
-| Negocio / Modelo | `encomiendas/aplicacion/servicios.py`, `operaciones_anteriores.py`, `encomiendas/dominio/` |
-| Datos | `encomiendas/persistencia/sqlite.py`, `operaciones_anteriores.py`, `esquema.sql` |
+| Negocio / Modelo | `encomiendas/aplicacion/servicios.py`, `operaciones_anteriores.py`, `encomiendas/aplicacion/dominio/` |
+| Datos | `encomiendas/datos/sqlite.py`, `operaciones_anteriores.py`, `esquema.sql` |
 
 ## Instalar y ejecutar
 

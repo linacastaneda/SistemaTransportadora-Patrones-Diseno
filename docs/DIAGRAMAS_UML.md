@@ -503,7 +503,7 @@ classDiagram
 
 ## 7. Observaciones de consistencia
 
-- **Solo dos patrones implementados:** `encomiendas/dominio/cadena.py` y `encomiendas/dominio/estados.py`.
+- **Solo dos patrones implementados:** `encomiendas/aplicacion/dominio/cadena.py` y `encomiendas/aplicacion/dominio/estados.py`.
 - **Iterator y Memento no están en el código ejecutable:** son diseños propuestos coherentes con las mismas entidades y repositorios.
 - **Coexistencia:** la cadena crea la guía en RECIBIDO; State continúa el ciclo de la misma guía, identificada con `id` y `numero`.
 - **Capas:** plantilla y controlador HTTP no realizan SQL; los servicios negocian la transacción; repositorios SQLite la almacenan.

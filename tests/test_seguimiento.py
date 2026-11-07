@@ -4,9 +4,9 @@ import threading
 
 import pytest
 
-from encomiendas.dominio.errores import ErrorNegocio
-from encomiendas.dominio.modelos import Receptor
-from encomiendas.persistencia.sqlite import SqliteEventos
+from encomiendas.aplicacion.dominio.errores import ErrorNegocio
+from encomiendas.aplicacion.dominio.modelos import Receptor
+from encomiendas.datos.sqlite import SqliteEventos
 
 RECEPTOR = Receptor("Ana Gómez", "123456789", "Paquete recibido en buen estado.")
 

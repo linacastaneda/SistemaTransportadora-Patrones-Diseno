@@ -1,7 +1,7 @@
 """ValidarCapacidad: participante del patrón Chain of Responsibility."""
 from __future__ import annotations
 import re
-from encomiendas.dominio.modelos import ContextoRegistro, PasoValidacion, ResultadoValidacion
+from encomiendas.aplicacion.dominio.modelos import ContextoRegistro, PasoValidacion, ResultadoValidacion
 from .validador_envio import ValidadorEnvio
 
 class ValidarCapacidad(ValidadorEnvio):

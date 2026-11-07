@@ -3,7 +3,7 @@ Las reglas de autorización y validación viven en la capa de negocio.
 """
 import sqlite3
 
-from encomiendas.dominio.errores import ErrorNegocio
+from encomiendas.aplicacion.dominio.errores import ErrorNegocio
 
 
 class RepositorioOperacionesSqlite:

@@ -14,12 +14,12 @@ from encomiendas.aplicacion.contratos import (
     RepositorioEventos,
     UnidadTrabajo,
 )
-from encomiendas.dominio.errores import ErrorNegocio
-from encomiendas.dominio.estados import cargar_estado
-from encomiendas.dominio.modelos import Empleado, GuiaEnvio, Viaje, Venta
+from encomiendas.aplicacion.dominio.errores import ErrorNegocio
+from encomiendas.aplicacion.dominio.estados import cargar_estado
+from encomiendas.aplicacion.dominio.modelos import Empleado, GuiaEnvio, Viaje, Venta
 
 
-from encomiendas.persistencia.sqlite_base import conectar, inicializar, _objeto
+from encomiendas.datos.sqlite_base import conectar, inicializar, _objeto
 
 class SqliteVentas(RepositorioVentas):
     def __init__(self, db):

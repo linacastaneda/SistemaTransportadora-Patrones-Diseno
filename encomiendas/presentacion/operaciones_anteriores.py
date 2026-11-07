@@ -3,7 +3,7 @@ El controlador HTTP no valida reglas de negocio ni ejecuta SQL.
 """
 from flask import Blueprint, current_app, flash, g, redirect, render_template, request, url_for
 
-from encomiendas.dominio.errores import ErrorNegocio
+from encomiendas.aplicacion.dominio.errores import ErrorNegocio
 from encomiendas.aplicacion.operaciones_anteriores import (
     ProgramacionViaje, RegistroPago,
 )

@@ -1,7 +1,7 @@
 """ValidadorEnvio: participante del patrón Chain of Responsibility."""
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from encomiendas.dominio.modelos import ContextoRegistro, PasoValidacion, ResultadoValidacion
+from encomiendas.aplicacion.dominio.modelos import ContextoRegistro, PasoValidacion, ResultadoValidacion
 
 class ValidadorEnvio(ABC):
     nombre = "Validación"

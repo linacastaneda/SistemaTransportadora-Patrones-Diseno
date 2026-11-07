@@ -1,7 +1,7 @@
 """EstadoEnvio: estado concreto del seguimiento de guías."""
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from encomiendas.dominio.errores import ErrorNegocio
+from encomiendas.aplicacion.dominio.errores import ErrorNegocio
 
 class EstadoEnvio(ABC):
     codigo: str

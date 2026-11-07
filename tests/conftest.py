@@ -6,9 +6,9 @@ import shutil
 import pytest
 
 from encomiendas import create_app
-from encomiendas.dominio.modelos import SolicitudRegistro
-from encomiendas.persistencia.demo import sembrar_demo
-from encomiendas.persistencia.sqlite import UnidadTrabajoSqlite, inicializar
+from encomiendas.aplicacion.dominio.modelos import SolicitudRegistro
+from encomiendas.datos.demo import sembrar_demo
+from encomiendas.datos.sqlite import UnidadTrabajoSqlite, inicializar
 
 
 @pytest.fixture(scope="session")

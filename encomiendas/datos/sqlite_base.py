@@ -12,9 +12,9 @@ from encomiendas.aplicacion.contratos import (
     RepositorioEventos,
     UnidadTrabajo,
 )
-from encomiendas.dominio.errores import ErrorNegocio
-from encomiendas.dominio.estados import cargar_estado
-from encomiendas.dominio.modelos import Empleado, GuiaEnvio, Viaje, Venta
+from encomiendas.aplicacion.dominio.errores import ErrorNegocio
+from encomiendas.aplicacion.dominio.estados import cargar_estado
+from encomiendas.aplicacion.dominio.modelos import Empleado, GuiaEnvio, Viaje, Venta
 
 
 def conectar(ruta, timeout=5):

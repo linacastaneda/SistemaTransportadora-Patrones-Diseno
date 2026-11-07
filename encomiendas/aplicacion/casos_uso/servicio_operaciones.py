@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from datetime import datetime
 import re
 
-from encomiendas.dominio.errores import ErrorNegocio
+from encomiendas.aplicacion.dominio.errores import ErrorNegocio
 from encomiendas.aplicacion.servicios import exigir_actor
 
 

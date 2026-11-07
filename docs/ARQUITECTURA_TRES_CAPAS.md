@@ -12,9 +12,9 @@ flowchart TB
     end
     subgraph N["CAPA 2 · NEGOCIO / Modelo"]
       S["Casos de uso: aplicacion/casos_uso/"]
-      E["Entidades: dominio/entidades/"]
-      A["Chain: dominio/patrones/cadena/"]
-      B["State: dominio/patrones/estado/"]
+      E["Entidades: aplicacion/dominio/entidades/"]
+      A["Chain: aplicacion/dominio/patrones/cadena/"]
+      B["State: aplicacion/dominio/patrones/estado/"]
       I["Puertos / interfaces: aplicacion/puertos/"]
       S --> E
       S --> A
@@ -22,7 +22,7 @@ flowchart TB
       S --> I
     end
     subgraph D["CAPA 3 · DATOS / Persistencia"]
-      R["Repositorios: persistencia/repositorios/"]
+      R["Repositorios: datos/repositorios/"]
       SQL[("SQLite: esquema.sql")]
       R --> SQL
     end
@@ -34,16 +34,16 @@ flowchart TB
 
 | Responsabilidad | Directorio | Clases reales |
 | --- | --- | --- |
-| Entidades del negocio | `dominio/entidades/` | `GuiaEnvio`, `Viaje`, `Venta`, `Empleado`, `SolicitudRegistro`, `PoliticaPaquete`, `ContextoRegistro`, `ContextoSeguimiento`, `PasoValidacion`, `ResultadoValidacion`, `Receptor` |
-| Patrón Chain | `dominio/patrones/cadena/` | `ValidadorEnvio`, `ValidarPersonas`, `ValidarPaquete`, `ValidarTrayecto`, `ValidarPago`, `ValidarCapacidad` |
-| Patrón State | `dominio/patrones/estado/` | `EstadoEnvio`, `Recibido`, `EnTransito`, `EnDestino`, `Entregado` |
+| Entidades del negocio | `aplicacion/dominio/entidades/` | `GuiaEnvio`, `Viaje`, `Venta`, `Empleado`, `SolicitudRegistro`, `PoliticaPaquete`, `ContextoRegistro`, `ContextoSeguimiento`, `PasoValidacion`, `ResultadoValidacion`, `Receptor` |
+| Patrón Chain | `aplicacion/dominio/patrones/cadena/` | `ValidadorEnvio`, `ValidarPersonas`, `ValidarPaquete`, `ValidarTrayecto`, `ValidarPago`, `ValidarCapacidad` |
+| Patrón State | `aplicacion/dominio/patrones/estado/` | `EstadoEnvio`, `Recibido`, `EnTransito`, `EnDestino`, `Entregado` |
 | Servicios de aplicación | `aplicacion/casos_uso/` | `ServicioAcceso`, `ServicioRegistroEncomienda`, `ServicioSeguimiento`, `ServicioViajes`, `ServicioConsultas`, `ServicioOperaciones`, `ProgramacionViaje`, `RegistroPago`, `RegistroConfirmado` |
 | Contratos (puertos) | `aplicacion/puertos/` | `RepositorioGuias`, `RepositorioViajes`, `RepositorioVentas`, `RepositorioAsignaciones`, `RepositorioEventos`, `UnidadTrabajo` |
-| Datos (adaptadores) | `persistencia/repositorios/` | `SqliteGuias`, `SqliteViajes`, `SqliteVentas`, `SqliteAsignaciones`, `SqliteEventos`, `SqliteEmpleados`, `ConsultasSqlite`, `UnidadTrabajoSqlite`, `RepositorioOperacionesSqlite` |
+| Datos (adaptadores) | `datos/repositorios/` | `SqliteGuias`, `SqliteViajes`, `SqliteVentas`, `SqliteAsignaciones`, `SqliteEventos`, `SqliteEmpleados`, `ConsultasSqlite`, `UnidadTrabajoSqlite`, `RepositorioOperacionesSqlite` |
 
 La ruta de cada archivo corresponde al nombre de la clase en *snake_case* (por ejemplo, `ServicioSeguimiento` está definido en `aplicacion/casos_uso/servicio_seguimiento.py`). Hay archivos funcionales sin clases (por ejemplo, rutas Flask, utilidades, fábrica de la cadena, inicialización SQLite).
 
-**Las fachadas `dominio/modelos.py`, `dominio/cadena.py`, `dominio/estados.py`, `aplicacion/servicios.py`, `aplicacion/contratos.py` y `persistencia/sqlite.py` ya no contienen definiciones de clases.** Exportan las mismas clases desde su nueva ubicación para no romper las pruebas ni las rutas antiguas.
+**Las fachadas `dominio/modelos.py`, `dominio/cadena.py`, `dominio/estados.py`, `aplicacion/servicios.py`, `aplicacion/contratos.py` y `datos/sqlite.py` ya no contienen definiciones de clases.** Exportan las mismas clases desde su nueva ubicación para no romper las pruebas ni las rutas antiguas.
 
 ## Dependencias permitidas
 

@@ -4,7 +4,7 @@ import pytest
 from encomiendas.aplicacion.operaciones_anteriores import (
     ProgramacionViaje, RegistroPago,
 )
-from encomiendas.dominio.errores import ErrorNegocio
+from encomiendas.aplicacion.dominio.errores import ErrorNegocio
 
 
 def test_programar_viaje_comparte_repositorio_con_encomiendas(servicios, uow):
