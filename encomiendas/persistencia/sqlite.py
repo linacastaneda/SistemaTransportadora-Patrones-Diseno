@@ -304,6 +304,8 @@ class UnidadTrabajoSqlite(UnidadTrabajo):
         self.eventos = SqliteEventos(self.db)
         self.empleados = SqliteEmpleados(self.db)
         self.consultas = ConsultasSqlite(self.db)
+        from .operaciones_anteriores import RepositorioOperacionesSqlite
+        self.operaciones = RepositorioOperacionesSqlite(self.db)
         return self
 
     def iniciar(self):
