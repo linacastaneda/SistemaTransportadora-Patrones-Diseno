@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+{% from 'macros.html' import csrf,badge %}
+{% block titulo %}
+  {{ guia.numero }}{% endblock %}
+{% block contenido %}
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">OPERACIONES / DETALLE DE GUÍA</p>
+      <div class="title-inline">
+        <h1>{{ guia.numero }}</h1>
+        {{ badge(guia.estado) }}
+      </div>
+      <p class="muted">Registrada el {{ guia.creado_en|fecha }} por {{ guia.creador }}</p>
+    </div>
+    <div class="heading-actions no-print">
+      <a class="button secondary" href="{{ url_for('web.guias') }}">Volver</a>
+      {% if impresion %}
+        <button class="button" data-print type="button">Imprimir</button>
+      {% else %}
+        <a class="button secondary"
+           href="{{ url_for('web.imprimir',guia_id=guia.id) }}">Comprobante</a>
+      {% endif %}
+    </div>
+  </div>
+  {% if error %}
+    <div class="alert alert-error" role="alert">
+      <strong>{{ error.codigo }}</strong>
+      <br>
+      {{ error.mensaje }}
+    </div>
+  {% endif %}
+  <div class="detail-grid">
+    <div>
+      <section class="panel">
+        <div class="panel-heading">
+          <h2>Datos del envío</h2>
+          <span class="muted">{{ guia.venta }}</span>
+        </div>
+        <div class="panel-body">
+          <div class="route-line">
+            <div>
+              <small>ORIGEN</small>
+              <strong>{{ guia.origen }}</strong>
+            </div>
+            <span class="route-divider"></span>
+            <div>
+              <small>DESTINO</small>
+              <strong>{{ guia.destino }}</strong>
+            </div>
+            <div>
+              <small>VIAJE</small>
+              <strong>{{ guia.viaje }} · {{ guia.placa }}</strong>
+            </div>
+          </div>
+          <div class="data-grid">
+            <div>
+              <h3>Remitente</h3>
+              <p>
+                {{ guia.remitente_nombre }}
+                <br>
+                <span class="muted">{{ guia.remitente_documento }}</span>
+                <br>
+                {{ guia.remitente_telefono }}
+              </p>
+            </div>
+            <div>
+              <h3>Destinatario</h3>
+              <p>
+                {{ guia.destinatario_nombre }}
+                <br>
+                <span class="muted">{{ guia.destinatario_documento }}</span>
+                <br>
+                {{ guia.destinatario_telefono }}
+              </p>
+            </div>
+            <div class="span-2">
+              <h3>Dirección de entrega</h3>
+              <p>{{ guia.direccion_entrega }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="panel">
+        <div class="panel-heading">
+          <h2>Paquete y valor declarado</h2>
+        </div>
+        <div class="panel-body">
+          <p>{{ guia.descripcion }}</p>
+          <dl class="package-data">
+            <div>
+              <dt>Peso</dt>
+              <dd>
+                {{ '%.3f'|format(guia.peso_g/1000) }} kg
+              </dd>
+            </div>
+            <div>
+              <dt>Dimensiones</dt>
+              <dd>
+                {{ guia.largo_cm }} × {{ guia.ancho_cm }} × {{ guia.alto_cm }} cm
+              </dd>
+            </div>
+            <div>
+              <dt>Valor declarado</dt>
+              <dd>
+                {{ guia.valor_centavos|dinero }}
+              </dd>
+            </div>
+          </dl>
+          {% if guia.observaciones %}
+            <div class="note-box">
+              <strong>Observaciones</strong>
+              <p>{{ guia.observaciones }}</p>
+            </div>
+          {% endif %}
+        </div>
+      </section>
+      <section class="panel">
+        <div class="panel-heading">
+          <h2>Historial de seguimiento</h2>
+          <span class="muted">{{ guia.eventos|length }} movimientos</span>
+        </div>
+        <ol class="timeline">
+          {% for evento in guia.eventos %}
+            <li>
+              <div class="timeline-heading">
+                <strong>{{ estados[evento.estado_nuevo] }}</strong>
+                <time>
+                {{ evento.fecha|fecha }}</time>
+              </div>
+              <p>{{ evento.actor }}</p>
+              {% if evento.receptor_nombre %}
+                <div class="receipt">
+                  <strong>Recibió: {{ evento.receptor_nombre }}</strong>
+                  <br>
+                  Documento: {{ evento.receptor_documento }}
+                  <p>{{ evento.constancia }}</p>
+                </div>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ol>
+      </section>
+    </div>
+    <aside>
+      {% if not impresion %}
+        <section class="panel action-panel no-print">
+          <p class="eyebrow">GESTIÓN DE LA GUÍA</p>
+          <h2>Siguiente operación</h2>
+          {% if "despachar" in guia.acciones %}
+            <p>Confirma que la encomienda se entrega al transporte asignado.</p>
+            <p class="muted">El primer despacho cierra la recepción de carga del viaje.</p>
+            <form method="post"
+                  action="{{ url_for('web.transicion',guia_id=guia.id,accion='despachar') }}">
+              {{ csrf() }}<input type="hidden" name="version" value="{{ guia.version }}">
+              <button class="button full" type="submit">Despachar guía</button>
+            </form>
+          {% elif "recibir_destino" in guia.acciones %}
+            <p>Registra la recepción de esta encomienda en {{ guia.destino }}.</p>
+            <p class="muted">Primero debe constar la llegada del viaje en <a href="{{ url_for('web.viajes') }}">Viajes y despachos</a>.</p>
+            <form method="post"
+                  action="{{ url_for('web.transicion',guia_id=guia.id,accion='recibir_destino') }}">
+              {{ csrf() }}<input type="hidden" name="version" value="{{ guia.version }}">
+              <button class="button full" type="submit">Recibir en destino</button>
+            </form>
+          {% elif "entregar" in guia.acciones %}
+            <p>Identifica a la persona que recibe y registra la constancia.</p>
+            <form method="post"
+                  action="{{ url_for('web.transicion',guia_id=guia.id,accion='entregar') }}">
+              {{ csrf() }}<input type="hidden" name="version" value="{{ guia.version }}">
+              <label class="field">
+                <span>Nombre de quien recibe</span>
+                <input name="receptor_nombre"
+                       required
+                       minlength="3"
+                       maxlength="120"
+                       value="{{ request.form.get('receptor_nombre', '') }}">
+              </label>
+              <label class="field">
+                <span>Documento</span>
+                <input name="receptor_documento"
+                       required
+                       maxlength="24"
+                       value="{{ request.form.get('receptor_documento', '') }}">
+              </label>
+              <label class="field">
+                <span>Constancia de entrega</span>
+                <textarea name="constancia" rows="4" required minlength="5" maxlength="300">
+{{ request.form.get('constancia','') }}</textarea>
+              </label>
+              <button class="button full" type="submit">Confirmar entrega</button>
+            </form>
+          {% else %}
+            <p>
+              {{ 'La entrega está finalizada. Puedes consultar o imprimir su comprobante.' if guia.estado=='ENTREGADO' else 'El perfil de coordinación gestiona los movimientos de esta guía.' }}
+            </p>
+          {% endif %}
+        </section>
+      {% endif %}
+      <section class="panel summary-box">
+        <h2>Validación del registro</h2>
+        <ul class="validation-record">
+          {% for paso in guia.pasos %}
+            <li>
+              <span>{{ paso.nombre }}</span>
+              <strong>Conforme</strong>
+            </li>
+          {% endfor %}
+        </ul>
+      </section>
+    </aside>
+  </div>
+{% endblock %}

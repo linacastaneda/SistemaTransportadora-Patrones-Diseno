@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% from 'macros.html' import csrf %}
+{% block titulo %}Acceso{% endblock %}
+{% block contenido %}
+  <div class="login-layout">
+    <section class="login-aside">
+      <div class="brand">
+        <span class="brand-mark">E</span>
+        <span>Encomiendas<small>GESTIÓN OPERATIVA</small>
+        </span>
+      </div>
+      <div>
+        <p class="eyebrow">CONTROL DE OPERACIONES</p>
+        <h1>
+          Registro y seguimiento
+          <br>
+          de encomiendas.
+        </h1>
+        <p class="login-intro">
+          Una guía por envío.
+          <br>
+          Una operación con trazabilidad.
+        </p>
+        <dl class="login-points">
+          <div>
+            <dt>01</dt>
+            <dd>
+              Validación de datos y capacidad
+            </dd>
+          </div>
+          <div>
+            <dt>02</dt>
+            <dd>
+              Control de despacho y recepción
+            </dd>
+          </div>
+          <div>
+            <dt>03</dt>
+            <dd>
+              Historial de entrega
+            </dd>
+          </div>
+        </dl>
+      </div>
+      <p class="login-foot">Aplicación académica · Datos ficticios</p>
+    </section>
+    <section class="login-panel">
+      <div class="login-form">
+        <p class="eyebrow">ACCESO DEL PERSONAL</p>
+        <h2>Iniciar sesión</h2>
+        <p class="muted">Ingresa con tu cuenta de operaciones.</p>
+        {% if error %}
+          <div class="alert alert-error" role="alert">{{ error.mensaje }}</div>
+        {% endif %}
+        <form method="post">
+          {{ csrf() }}
+          <label class="field">
+            <span>Correo electrónico</span>
+            <input type="email"
+                   name="correo"
+                   required
+                   autocomplete="username"
+                   value="{{ request.form.get('correo', '') }}"
+                   autofocus
+                   maxlength="254">
+          </label>
+          <label class="field">
+            <span>Contraseña</span>
+            <input type="password"
+                   name="clave"
+                   required
+                   autocomplete="current-password"
+                   maxlength="256">
+          </label>
+          <button class="button full" type="submit">Ingresar</button>
+        </form>
+        <p class="login-help">Las cuentas de demostración y las instrucciones de inicio están en el README del proyecto.</p>
+      </div>
+    </section>
+  </div>
+{% endblock %}

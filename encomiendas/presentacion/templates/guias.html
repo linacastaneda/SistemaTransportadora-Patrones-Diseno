@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block titulo %}Guías de envío{% endblock %}
+{% block contenido %}
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">OPERACIONES / GUÍAS</p>
+      <h1>Guías de envío</h1>
+      <p class="muted">Consulta los datos y movimientos de cada encomienda.</p>
+    </div>
+    <a class="button" href="{{ url_for('web.nueva') }}">Registrar encomienda</a>
+  </div>
+  <section class="panel">
+    <form class="filters" method="get">
+      <label class="field grow">
+        <span>Número de guía o destinatario</span>
+        <input name="q"
+               value="{{ buscar }}"
+               placeholder="Buscar una encomienda"
+               maxlength="100">
+      </label>
+      <label class="field">
+        <span>Estado</span>
+        <select name="estado">
+          <option value="">Todos los estados</option>
+          {% for cod,etiqueta in estados.items() %}
+            <option value="{{ cod }}" {{ 'selected' if estado==cod }}>{{ etiqueta }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <button type="submit" class="button secondary">Buscar</button>
+      <a class="filter-clear" href="{{ url_for('web.guias') }}">Limpiar</a>
+    </form>
+    {% include "_tabla_guias.html" %}
+    <div class="pagination">
+      <span>{{ total }} resultados · Página {{ pagina }} de {{ paginas }}</span>
+      <div>
+        {% if pagina>1 %}
+          <a class="button small secondary"
+             href="{{ url_for('web.guias',q=buscar,estado=estado,pagina=pagina-1) }}">Anterior</a>
+        {% endif %}
+        {% if pagina<paginas %}
+          <a class="button small secondary"
+             href="{{ url_for('web.guias',q=buscar,estado=estado,pagina=pagina+1) }}">Siguiente</a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+{% endblock %}
