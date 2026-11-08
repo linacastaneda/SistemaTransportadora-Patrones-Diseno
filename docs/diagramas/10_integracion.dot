@@ -1,0 +1,25 @@
+digraph G {
+graph [rankdir=TB,bgcolor="white",pad="0.15",nodesep="0.25",ranksep="0.45",dpi=200];
+node [shape=plain,fontname="Arial",fontsize=11];
+edge [fontname="Arial",fontsize=9,arrowsize=0.8];
+v [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>Controladores Flask</B></TD></TR><TR><TD ALIGN="LEFT">«presentación»<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+nueva(...)<BR ALIGN="LEFT"/>+transicion(...)<BR ALIGN="LEFT"/>+programar_viaje(...)<BR ALIGN="LEFT"/>+registrar_pago(...)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+r [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ServicioRegistroEncomienda</B></TD></TR><TR><TD ALIGN="LEFT">+cadena: ValidadorEnvio<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+registrar(...)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+s [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ServicioSeguimiento</B></TD></TR><TR><TD ALIGN="LEFT">+crear_uow: callable<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+despachar(...)<BR ALIGN="LEFT"/>+recibir_destino(...)<BR ALIGN="LEFT"/>+entregar(...)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+o [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ServicioOperaciones</B></TD></TR><TR><TD ALIGN="LEFT">+MEDIOS: frozenset<BR ALIGN="LEFT"/>+crear_uow: callable<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+programar_viaje(...)<BR ALIGN="LEFT"/>+registrar_pago(...)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+c [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ValidadorEnvio</B></TD></TR><TR><TD ALIGN="LEFT">-_siguiente: ValidadorEnvio | None<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+validar(...)<BR ALIGN="LEFT"/>+enlazar(...)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+g [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>GuiaEnvio</B></TD></TR><TR><TD ALIGN="LEFT">+id: int<BR ALIGN="LEFT"/>+version: int<BR ALIGN="LEFT"/>+estado: EstadoEnvio<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+despachar(...)<BR ALIGN="LEFT"/>+recibir_destino(...)<BR ALIGN="LEFT"/>+entregar(...)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+e [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>EstadoEnvio</B></TD></TR><TR><TD ALIGN="LEFT">+codigo: str<BR ALIGN="LEFT"/>+acciones: tuple<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+despachar(...)<BR ALIGN="LEFT"/>+recibir_destino(...)<BR ALIGN="LEFT"/>+entregar(...)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+u [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>UnidadTrabajoSqlite</B></TD></TR><TR><TD ALIGN="LEFT">+guias, viajes, ventas<BR ALIGN="LEFT"/>+asignaciones, eventos, operaciones<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+iniciar(...)<BR ALIGN="LEFT"/>+confirmar(...)<BR ALIGN="LEFT"/>+revertir(...)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+q [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>RepositorioOperacionesSqlite</B></TD></TR><TR><TD ALIGN="LEFT">+db: Connection<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+sucursales_validas(...)<BR ALIGN="LEFT"/>+crear_viaje(...)<BR ALIGN="LEFT"/>+crear_pago(...)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+v -> r [arrowhead=vee,label="usa"];
+r -> u [arrowhead=vee,label="transacción"];
+v -> s [arrowhead=vee,label="usa"];
+s -> u [arrowhead=vee,label="transacción"];
+v -> o [arrowhead=vee,label="usa"];
+o -> u [arrowhead=vee,label="transacción"];
+r -> c [arrowhead=vee,label="valida"];
+r -> g [arrowhead=vee,style=dashed,label="crea"];
+s -> g [arrowhead=vee,label="opera"];
+g -> e [arrowhead=vee,label="delega"];
+u -> q [arrowhead=vee,label="operaciones"];
+}

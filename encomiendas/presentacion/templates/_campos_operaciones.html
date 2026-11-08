@@ -1,0 +1,9 @@
+{% macro entrada(nombre, etiqueta, extra='', ayuda='') %}
+  <label class="field" for="{{ nombre }}">
+    <span>{{ etiqueta }}</span>
+    <input id="{{ nombre }}" name="{{ nombre }}" value="{{ valores.get(nombre,'') }}" required
+           {% if nombre in campos_error %}aria-invalid="true"{% endif %}
+           {% if ayuda %}aria-describedby="{{ nombre }}_ayuda"{% endif %} {{ extra|safe }}>
+    {% if ayuda %}<small id="{{ nombre }}_ayuda">{{ ayuda }}</small>{% endif %}
+  </label>
+{% endmacro %}

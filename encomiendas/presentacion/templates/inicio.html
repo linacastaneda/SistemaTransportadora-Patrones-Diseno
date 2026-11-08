@@ -1,72 +1,61 @@
 {% extends "base.html" %}
-{% block titulo %}Resumen operativo{% endblock %}
+{% block titulo %}Inicio{% endblock %}
 {% block contenido %}
   <div class="page-heading">
     <div>
-      <p class="eyebrow">OPERACIONES / VISTA GENERAL</p>
-      <h1>Resumen operativo</h1>
-      <p class="muted">Registro, despacho y entrega de encomiendas.</p>
+      <p class="eyebrow">GESTIÓN OPERATIVA / {{ fecha_hoy }}</p>
+      <h1>Resumen de operaciones</h1>
+      <p class="muted">Viajes, pagos y encomiendas en tu ámbito de consulta.</p>
     </div>
     <a class="button" href="{{ url_for('web.nueva') }}">Registrar encomienda</a>
   </div>
   <div class="metrics">
-    {% for codigo,nombre,nota in [('RECIBIDO','Por despachar','Guías recibidas en origen'),('EN_TRANSITO','En tránsito','En traslado a destino'),('EN_DESTINO','Por entregar','Disponibles en destino'),('ENTREGADO','Entregadas','Con constancia de recepción')] %}
-      <a class="metric" href="{{ url_for('web.guias',estado=codigo) }}">
-        <span>{{ nombre }}</span>
-        <strong>{{ indicadores.get(codigo,0) }}</strong>
-        <small>{{ nota }}</small>
-      </a>
-    {% endfor %}
+    <a class="metric" href="{{ url_for('web.viajes',estado='abiertos') }}"><span>Viajes abiertos</span><strong>{{ abiertos|length }}</strong><small>Con recepción de carga disponible</small></a>
+    <a class="metric" href="{{ url_for('web.viajes',estado='por_autorizar') }}"><span>Salidas por autorizar</span><strong>{{ por_autorizar }}</strong><small>Pendientes de coordinación</small></a>
+    <a class="metric" href="{{ url_for('web.ventas',estado='pendientes') }}"><span>Ventas con saldo</span><strong>{{ ventas_pendientes|length }}</strong><small>Requieren completar el pago</small></a>
+    <a class="metric" href="{{ url_for('web.guias') }}"><span>Guías registradas</span><strong>{{ total }}</strong><small>Consulta de registro y seguimiento</small></a>
+  </div>
+  <div class="overview-grid">
+    <section class="panel">
+      <div class="panel-heading">
+        <div><h2>Transporte</h2><p>Viajes abiertos para recibir carga</p></div>
+        <a href="{{ url_for('web.viajes') }}">Ver viajes</a>
+      </div>
+      <div class="operation-list">
+        {% for v in abiertos[:4] %}
+          <div class="operation-row">
+            <div><strong>{{ v.codigo }}</strong><p>{{ v.origen }} / {{ v.destino }}</p><small>{{ v.fecha_salida|fecha_local }} · {{ v.placa }}</small></div>
+            <div class="operation-value"><strong>{{ (v.peso_maximo_g-v.peso_ocupado_g)|cantidad(1000) }} kg</strong><small>disponibles</small></div>
+          </div>
+        {% else %}<p class="empty">No hay viajes abiertos para recibir carga.</p>{% endfor %}
+      </div>
+      {% if g.actor.rol=='coordinador' %}<div class="panel-bottom"><a class="button small secondary" href="{{ url_for('operaciones.programar_viaje') }}">Programar viaje</a></div>{% endif %}
+    </section>
+    <section class="panel">
+      <div class="panel-heading">
+        <div><h2>Ventas y pagos</h2><p>Ventas con saldo pendiente · COP</p></div>
+        <a href="{{ url_for('web.ventas',estado='pendientes') }}">Ver ventas</a>
+      </div>
+      <div class="operation-list">
+        {% for v in ventas_pendientes[:4] %}
+          <div class="operation-row">
+            <div><strong>{{ v.referencia }}</strong><p>{{ v.remitente_nombre }}</p><small>{{ v.origen }} / {{ v.destino }}</small></div>
+            <div class="operation-value"><strong>{{ (v.total_centavos-v.pagado_centavos)|dinero }}</strong>{% if g.actor.rol=='coordinador' %}<a href="{{ url_for('operaciones.registrar_pago',venta_id=v.id) }}">Registrar pago</a>{% else %}<small>Saldo pendiente</small>{% endif %}</div>
+          </div>
+        {% else %}<p class="empty">No hay ventas con saldo pendiente.</p>{% endfor %}
+      </div>
+    </section>
   </div>
   <section class="panel">
     <div class="panel-heading">
-      <div>
-        <h2>Últimas guías registradas</h2>
-        <p>{{ total }} guías en tu ámbito de consulta</p>
-      </div>
+      <div><h2>Encomiendas</h2><p>Últimas guías registradas</p></div>
       <a href="{{ url_for('web.guias') }}">Consultar todas</a>
     </div>
+    <nav class="status-summary" aria-label="Guías por estado">
+      {% for codigo,nombre in [('RECIBIDO','Por despachar'),('EN_TRANSITO','En tránsito'),('EN_DESTINO','Por entregar'),('ENTREGADO','Entregadas')] %}
+        <a href="{{ url_for('web.guias',estado=codigo) }}">{{ nombre }} <strong>{{ indicadores.get(codigo,0) }}</strong></a>
+      {% endfor %}
+    </nav>
     {% include "_tabla_guias.html" %}
-  </section>
-  <section class="panel">
-    <div class="panel-heading">
-      <div>
-        <h2>Capacidad para nuevos envíos</h2>
-        <p>Viajes que mantienen abierta la recepción de carga</p>
-      </div>
-      <a href="{{ url_for('web.viajes') }}">Gestionar viajes</a>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Viaje</th>
-            <th>Trayecto</th>
-            <th>Peso disponible</th>
-            <th>Volumen disponible</th>
-            <th>Salida</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for v in viajes if v.recibe_carga and v.activo %}
-            <tr>
-              <td class="reference">
-                {{ v.codigo }}<small> {{ v.placa }}</small>
-              </td>
-              <td>{{ v.origen }} / {{ v.destino }}</td>
-              <td>{{ '%.3f'|format((v.peso_maximo_g-v.peso_ocupado_g)/1000) }} kg</td>
-              <td>{{ '%.3f'|format((v.volumen_maximo_cm3-v.volumen_ocupado_cm3)/1000000) }} m³</td>
-              <td>
-                <span class="tag">{{ 'Autorizada' if v.salida_autorizada else 'Por autorizar' }}</span>
-              </td>
-            </tr>
-          {% else %}
-            <tr>
-              <td colspan="5" class="empty">No hay viajes abiertos para recibir carga.</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
   </section>
 {% endblock %}

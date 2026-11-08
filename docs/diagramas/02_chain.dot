@@ -1,0 +1,29 @@
+digraph G {
+graph [rankdir=TB,bgcolor="white",pad="0.15",nodesep="0.25",ranksep="0.45",dpi=200];
+node [shape=plain,fontname="Arial",fontsize=11];
+edge [fontname="Arial",fontsize=9,arrowsize=0.8];
+v [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>«abstracta» ValidadorEnvio</B></TD></TR><TR><TD ALIGN="LEFT">+nombre: str<BR ALIGN="LEFT"/>-_siguiente: ValidadorEnvio | None<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+enlazar(siguiente)<BR ALIGN="LEFT"/>+validar(ctx): ResultadoValidacion<BR ALIGN="LEFT"/>-_resolver(ctx, codigo, error)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+v0 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ValidarPersonas</B></TD></TR><TR><TD ALIGN="LEFT">+nombre: str<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+validar(ctx)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+v0 -> v [arrowhead=empty,constraint=false,label=""];
+v1 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ValidarPaquete</B></TD></TR><TR><TD ALIGN="LEFT">+nombre: str<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+validar(ctx)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+v1 -> v [arrowhead=empty,constraint=false,label=""];
+v2 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ValidarTrayecto</B></TD></TR><TR><TD ALIGN="LEFT">+nombre: str<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+validar(ctx)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+v2 -> v [arrowhead=empty,constraint=false,label=""];
+v3 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ValidarPago</B></TD></TR><TR><TD ALIGN="LEFT">+nombre: str<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+validar(ctx)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+v3 -> v [arrowhead=empty,constraint=false,label=""];
+v4 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ValidarCapacidad</B></TD></TR><TR><TD ALIGN="LEFT">+nombre: str<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+validar(ctx)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+v4 -> v [arrowhead=empty,constraint=false,label=""];
+s [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ServicioRegistroEncomienda</B></TD></TR><TR><TD ALIGN="LEFT">+cadena: ValidadorEnvio<BR ALIGN="LEFT"/>+politica: PoliticaPaquete<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+registrar(actor_id, solicitud, token)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+s -> v [arrowhead=vee,label="usa"];
+c [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ContextoRegistro</B></TD></TR><TR><TD ALIGN="LEFT">+solicitud: SolicitudRegistro<BR ALIGN="LEFT"/>+venta: Venta | None<BR ALIGN="LEFT"/>+viaje: Viaje | None<BR ALIGN="LEFT"/>+peso_ocupado_g: int<BR ALIGN="LEFT"/>+volumen_ocupado_cm3: int<BR ALIGN="LEFT"/>+sucursales_activas: frozenset<BR ALIGN="LEFT"/>+politica: PoliticaPaquete<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+r [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ResultadoValidacion</B></TD></TR><TR><TD ALIGN="LEFT">+aprobado: bool<BR ALIGN="LEFT"/>+codigo: str<BR ALIGN="LEFT"/>+mensaje: str<BR ALIGN="LEFT"/>+pasos: tuple<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+v -> c [constraint=false,arrowhead=vee,style=dashed,label="consulta"];
+v -> r [constraint=false,arrowhead=vee,style=dashed,label="devuelve"];
+v -> v [arrowhead=vee,label="siguiente 0..1"];
+
+{rank=same;v0;v1;v2;}
+{rank=same;v3;v4;}
+v -> v0 [style=invis];
+v0 -> v3 [style=invis];
+v3 -> c [style=invis];
+}

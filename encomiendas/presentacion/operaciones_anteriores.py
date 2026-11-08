@@ -1,66 +1,88 @@
-"""Presentación de los procesos recuperados de la primera entrega.
-El controlador HTTP no valida reglas de negocio ni ejecuta SQL.
-"""
+#Las rutas conservan su prefijo para mantener los enlaces de la entrega anterior.
 from flask import Blueprint, current_app, flash, g, redirect, render_template, request, url_for
 
 from encomiendas.aplicacion.dominio.errores import ErrorNegocio
-from encomiendas.aplicacion.operaciones_anteriores import (
-    ProgramacionViaje, RegistroPago,
-)
+from .formularios import leer_pago, leer_programacion
 
 operaciones = Blueprint("operaciones", __name__)
 
+#La asociación relaciona una regla rechazada con los campos editables de la vista.
+CAMPOS_ERROR = {
+    "CODIGO_INVALIDO": ("codigo",),
+    "VIAJE_DUPLICADO": ("codigo",),
+    "FECHA_INVALIDA": ("fecha_salida",),
+    "TRAYECTO_INVALIDO": ("origen_id", "destino_id"),
+    "SUCURSAL_INVALIDA": ("origen_id", "destino_id"),
+    "TRIPULACION_INVALIDA": ("placa", "conductor", "ayudante"),
+    "CAPACIDAD_INVALIDA": ("peso_maximo_kg", "volumen_maximo_m3"),
+    "MEDIO_INVALIDO": ("medio",),
+    "REFERENCIA_INVALIDA": ("referencia",),
+    "PAGO_DUPLICADO": ("referencia",),
+    "VENTA_INVALIDA": ("venta_id",),
+    "SALDO_INVALIDO": ("importe_cop",),
+    "IMPORTE_INVALIDO": ("importe_cop",),
+}
 
-def entero(campo: str) -> int:
-    try:
-        return int(request.form.get(campo, ""))
-    except (ValueError, TypeError) as exc:
-        raise ErrorNegocio("CAMPO_INVALIDO", f"El campo {campo} debe ser un número entero.", 422) from exc
+
+def servicios():
+    return current_app.extensions["servicios"]
 
 
-def servicio():
-    return current_app.extensions["servicios"]["operaciones"]
+def exigir_coordinacion():
+    #También se protege el acceso directo; el servicio vuelve a autorizar la escritura.
+    if g.actor.rol != "coordinador":
+        raise ErrorNegocio(
+            "SIN_PERMISO", "Esta operación requiere el perfil de coordinación.", 403
+        )
+
+
+def formulario(tipo, valores, error=None):
+    catalogos = servicios()["consultas"].catalogos(g.actor.id)
+    pendientes = [
+        v for v in catalogos["ventas"]
+        if v["activa"] and not v["guia_numero"] and v["pagado_centavos"] < v["total_centavos"]
+    ]
+    elegida = next(
+        (v for v in pendientes if str(v["id"]) == valores.get("venta_id")), None
+    )
+    return render_template(
+        "operaciones.html", tipo=tipo, valores=valores, error=error,
+        campos_error=CAMPOS_ERROR.get(error.codigo, ()) if error else (),
+        pendientes=pendientes, elegida=elegida, **catalogos,
+    ), error.estado_http if error else 200
 
 
 @operaciones.get("/")
 def inicio():
-    catalogos = current_app.extensions["servicios"]["consultas"].catalogos(g.actor.id)
-    return render_template("operaciones.html", **catalogos, error=None)
+    return redirect(url_for("web.viajes"))
 
 
-@operaciones.post("/viajes")
+@operaciones.route("/viajes", methods=["GET", "POST"])
 def programar_viaje():
-    try:
-        datos = ProgramacionViaje(
-            codigo=request.form.get("codigo", "").strip(),
-            origen_id=entero("origen_id"), destino_id=entero("destino_id"),
-            fecha_salida=request.form.get("fecha_salida", ""),
-            placa=request.form.get("placa", ""),
-            conductor=request.form.get("conductor", ""),
-            ayudante=request.form.get("ayudante", ""),
-            peso_maximo_g=entero("peso_maximo_g"),
-            volumen_maximo_cm3=entero("volumen_maximo_cm3"),
-        )
-        identificador = servicio().programar_viaje(g.actor.id, datos)
-        flash(f"Viaje {identificador} programado.", "exito")
+    exigir_coordinacion()
+    valores = dict(request.form) if request.method == "POST" else {}
+    if request.method == "POST":
+        try:
+            servicios()["operaciones"].programar_viaje(g.actor.id, leer_programacion(valores))
+        except ErrorNegocio as error:
+            return formulario("viaje", valores, error)
+        flash(f"Viaje {valores['codigo'].strip()} programado. Su salida queda por autorizar.", "exito")
         return redirect(url_for("web.viajes"))
-    except ErrorNegocio as error:
-        catalogos = current_app.extensions["servicios"]["consultas"].catalogos(g.actor.id)
-        return render_template("operaciones.html", **catalogos, error=error), error.estado_http
+    return formulario("viaje", valores)
 
 
-@operaciones.post("/pagos")
+@operaciones.route("/pagos", methods=["GET", "POST"])
 def registrar_pago():
-    try:
-        datos = RegistroPago(
-            venta_id=entero("venta_id"),
-            medio=request.form.get("medio", "").strip().upper(),
-            referencia=request.form.get("referencia", "").strip(),
-            importe_centavos=entero("importe_centavos"),
-        )
-        servicio().registrar_pago(g.actor.id, datos)
-        flash("Pago registrado; la venta actualiza su saldo.", "exito")
+    exigir_coordinacion()
+    valores = (
+        dict(request.form) if request.method == "POST"
+        else {"venta_id": request.args.get("venta_id", ""), "medio": "EFECTIVO"}
+    )
+    if request.method == "POST":
+        try:
+            servicios()["operaciones"].registrar_pago(g.actor.id, leer_pago(valores))
+        except ErrorNegocio as error:
+            return formulario("pago", valores, error)
+        flash("Pago registrado. El saldo de la venta se actualizó correctamente.", "exito")
         return redirect(url_for("web.ventas"))
-    except ErrorNegocio as error:
-        catalogos = current_app.extensions["servicios"]["consultas"].catalogos(g.actor.id)
-        return render_template("operaciones.html", **catalogos, error=error), error.estado_http
+    return formulario("pago", valores)

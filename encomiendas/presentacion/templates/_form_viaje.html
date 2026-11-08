@@ -1,0 +1,45 @@
+{% from '_campos_operaciones.html' import entrada with context %}
+<div class="form-layout">
+  <form method="post" action="{{ url_for('operaciones.programar_viaje') }}">
+    {{ csrf() }}
+    <section class="panel form-panel">
+      <h2><span class="step">1</span>Trayecto y salida</h2>
+      <div class="form-grid">
+        {{ entrada('codigo','Código del viaje','maxlength="30" minlength="3" pattern="[A-Za-z0-9-]{3,30}" placeholder="VIAJE-101"','Entre 3 y 30 letras, números o guiones.') }}
+        {{ entrada('fecha_salida','Fecha y hora de salida','type="datetime-local"','Hora local de Colombia (UTC−5).') }}
+        {% for nombre,etiqueta in [('origen_id','Sucursal de origen'),('destino_id','Sucursal de destino')] %}
+          <label class="field" for="{{ nombre }}"><span>{{ etiqueta }}</span>
+            <select id="{{ nombre }}" name="{{ nombre }}" required {% if nombre in campos_error %}aria-invalid="true"{% endif %}>
+              <option value="">Selecciona una sucursal</option>
+              {% if valores.get(nombre) and valores.get(nombre)|int not in sucursales|map(attribute='id')|list %}<option value="{{ valores.get(nombre) }}" selected>Sucursal no disponible; selecciona otra</option>{% endif %}
+              {% for s in sucursales %}<option value="{{ s.id }}" {{ 'selected' if valores.get(nombre)==s.id|string }}>{{ s.nombre }}</option>{% endfor %}
+            </select>
+          </label>
+        {% endfor %}
+      </div>
+    </section>
+    <section class="panel form-panel">
+      <h2><span class="step">2</span>Vehículo y tripulación</h2>
+      {{ entrada('placa','Placa del vehículo','maxlength="20" placeholder="ABC123"') }}
+      <div class="form-grid">
+        {{ entrada('conductor','Conductor','maxlength="120"') }}
+        {{ entrada('ayudante','Ayudante','maxlength="120"') }}
+      </div>
+    </section>
+    <section class="panel form-panel">
+      <h2><span class="step">3</span>Capacidad de carga</h2>
+      <div class="form-grid">
+        {{ entrada('peso_maximo_kg','Peso máximo (kg)','inputmode="decimal" maxlength="24" placeholder="1000"','Valor positivo. Hasta 3 decimales; ejemplo: 1250,5.') }}
+        {{ entrada('volumen_maximo_m3','Volumen máximo (m³)','inputmode="decimal" maxlength="24" placeholder="12"','Valor positivo. Hasta 6 decimales; ejemplo: 2,75.') }}
+      </div>
+      <div class="form-actions"><p>Todos los campos son obligatorios.</p><button class="button" type="submit">Programar viaje</button></div>
+    </section>
+  </form>
+  <aside class="registration-aside">
+    <section class="panel summary-box">
+      <h2>Antes de confirmar</h2>
+      <ul class="check-list"><li>El código identifica un único viaje.</li><li>Origen y destino deben ser diferentes.</li><li>Registra la capacidad máxima del vehículo.</li></ul>
+      <p class="muted">El nuevo viaje podrá recibir carga. Coordinación deberá autorizar la salida antes del despacho de sus guías.</p>
+    </section>
+  </aside>
+</div>

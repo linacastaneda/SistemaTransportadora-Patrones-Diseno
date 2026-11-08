@@ -1,0 +1,24 @@
+digraph G {
+graph [rankdir=TB,bgcolor="white",pad="0.15",nodesep="0.25",ranksep="0.45",dpi=200];
+node [shape=plain,fontname="Arial",fontsize=11];
+edge [fontname="Arial",fontsize=9,arrowsize=0.8];
+a [shape=circle,style=filled,fillcolor=black,width=0.14,height=0.14,fixedsize=true,label="",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+b [shape=box,style=rounded,label="Autorizar actor y abrir transacción",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+c [shape=box,style=rounded,label="Consultar venta, viaje y carga",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+d [shape=box,style=rounded,label="Ejecutar siguiente validador",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+e [shape=diamond,label="¿Aprueba?",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+f [shape=diamond,label="¿Quedan validadores?",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+g [shape=box,style=rounded,label="Guardar guía, carga y evento; confirmar",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+x [shape=box,style=rounded,label="Rechazar y revertir; conservar formulario",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+z [shape=doublecircle,style=filled,fillcolor=black,width=0.14,height=0.14,fixedsize=true,label="",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+a -> b [arrowhead=vee,label=""];
+b -> c [arrowhead=vee,label=""];
+c -> d [arrowhead=vee,label=""];
+d -> e [arrowhead=vee,label=""];
+e -> x [arrowhead=vee,label="No"];
+e -> f [arrowhead=vee,label="Sí"];
+f -> d [arrowhead=vee,label="Sí"];
+f -> g [arrowhead=vee,label="No"];
+g -> z [arrowhead=vee,label=""];
+x -> z [arrowhead=vee,label=""];
+}

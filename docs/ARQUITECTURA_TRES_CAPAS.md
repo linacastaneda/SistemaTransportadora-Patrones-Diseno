@@ -27,7 +27,7 @@ flowchart TB
       R --> SQL
     end
     C --> S
-    I <|.. R
+    R -. "implementa" .-> I
 ```
 
 ## Regla de una clase por archivo

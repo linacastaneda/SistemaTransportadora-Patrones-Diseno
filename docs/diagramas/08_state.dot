@@ -1,0 +1,25 @@
+digraph G {
+graph [rankdir=TB,bgcolor="white",pad="0.15",nodesep="0.25",ranksep="0.15",dpi=200];
+node [shape=plain,fontname="Arial",fontsize=11];
+edge [fontname="Arial",fontsize=9,arrowsize=0.8];
+e [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>«abstracta» EstadoEnvio</B></TD></TR><TR><TD ALIGN="LEFT">+codigo: str<BR ALIGN="LEFT"/>+etiqueta: str<BR ALIGN="LEFT"/>+acciones: tuple<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+despachar(guia, ctx)<BR ALIGN="LEFT"/>+recibir_destino(guia, ctx)<BR ALIGN="LEFT"/>+entregar(guia, ctx, receptor)<BR ALIGN="LEFT"/>-_rechazar(accion)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+e0 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>Recibido</B></TD></TR><TR><TD ALIGN="LEFT">+codigo: str<BR ALIGN="LEFT"/>+etiqueta: str<BR ALIGN="LEFT"/>+acciones: tuple<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+despachar(guia, ctx)<BR ALIGN="LEFT"/>+recibir_destino(guia, ctx)<BR ALIGN="LEFT"/>+entregar(guia, ctx, receptor)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+e0 -> e [arrowhead=empty,constraint=false,label=""];
+e1 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>EnTransito</B></TD></TR><TR><TD ALIGN="LEFT">+codigo: str<BR ALIGN="LEFT"/>+etiqueta: str<BR ALIGN="LEFT"/>+acciones: tuple<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+despachar(guia, ctx)<BR ALIGN="LEFT"/>+recibir_destino(guia, ctx)<BR ALIGN="LEFT"/>+entregar(guia, ctx, receptor)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+e1 -> e [arrowhead=empty,constraint=false,label=""];
+e2 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>EnDestino</B></TD></TR><TR><TD ALIGN="LEFT">+codigo: str<BR ALIGN="LEFT"/>+etiqueta: str<BR ALIGN="LEFT"/>+acciones: tuple<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+despachar(guia, ctx)<BR ALIGN="LEFT"/>+recibir_destino(guia, ctx)<BR ALIGN="LEFT"/>+entregar(guia, ctx, receptor)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+e2 -> e [arrowhead=empty,constraint=false,label=""];
+e3 [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>Entregado</B></TD></TR><TR><TD ALIGN="LEFT">+codigo: str<BR ALIGN="LEFT"/>+etiqueta: str<BR ALIGN="LEFT"/>+acciones: tuple<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+despachar(guia, ctx)<BR ALIGN="LEFT"/>+recibir_destino(guia, ctx)<BR ALIGN="LEFT"/>+entregar(guia, ctx, receptor)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+e3 -> e [arrowhead=empty,constraint=false,label=""];
+g [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>GuiaEnvio</B></TD></TR><TR><TD ALIGN="LEFT">+id: int<BR ALIGN="LEFT"/>+numero: str<BR ALIGN="LEFT"/>+viaje_id: int<BR ALIGN="LEFT"/>+origen_id: int<BR ALIGN="LEFT"/>+destino_id: int<BR ALIGN="LEFT"/>+version: int<BR ALIGN="LEFT"/>+estado: EstadoEnvio<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+despachar(ctx)<BR ALIGN="LEFT"/>+recibir_destino(ctx)<BR ALIGN="LEFT"/>+entregar(ctx, receptor)<BR ALIGN="LEFT"/>-_cambiar_estado(nuevo)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+s [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ServicioSeguimiento</B></TD></TR><TR><TD ALIGN="LEFT">+crear_uow: callable<BR ALIGN="LEFT"/>+reloj: callable<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+despachar(actor_id, guia_id, version)<BR ALIGN="LEFT"/>+recibir_destino(actor_id, guia_id, version)<BR ALIGN="LEFT"/>+entregar(actor_id, guia_id, version, receptor)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+s -> g [arrowhead=vee,label="opera"];
+g -> e [arrowhead=vee,label="estado vigente 1"];
+
+{rank=same;e0;e1;}
+{rank=same;e2;e3;}
+e -> e0 [style=invis];
+e0 -> e2 [style=invis];
+
+
+}

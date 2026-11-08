@@ -1,0 +1,10 @@
+digraph G {
+graph [rankdir=TB,bgcolor="white",pad="0.15",nodesep="0.25",ranksep="0.45",dpi=200];
+node [shape=plain,fontname="Arial",fontsize=11];
+edge [fontname="Arial",fontsize=9,arrowsize=0.8];
+p [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>1. PRESENTACIÓN</B></TD></TR><TR><TD ALIGN="LEFT">Flask: rutas HTTP y formularios<BR ALIGN="LEFT"/>HTML / CSS: pantallas y navegación<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+a [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>2. APLICACIÓN</B></TD></TR><TR><TD ALIGN="LEFT">Casos de uso: registro, seguimiento, viajes y pagos<BR ALIGN="LEFT"/>Dominio: entidades, Chain y State<BR ALIGN="LEFT"/>Puertos: contratos de repositorios<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+b [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>3. DATOS</B></TD></TR><TR><TD ALIGN="LEFT">Repositorios SQLite y unidad de trabajo<BR ALIGN="LEFT"/>Guías, ventas, pagos, viajes e historial<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+p -> a [arrowhead=vee,label="solicita casos de uso"];
+a -> b [arrowhead=vee,label="acceso por repositorios"];
+}

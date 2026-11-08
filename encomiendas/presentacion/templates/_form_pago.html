@@ -1,0 +1,49 @@
+{% from '_campos_operaciones.html' import entrada with context %}
+<div class="form-layout">
+  <form method="post" action="{{ url_for('operaciones.registrar_pago') }}">
+    {{ csrf() }}
+    <section class="panel form-panel">
+      <h2><span class="step">1</span>Venta y saldo pendiente</h2>
+      {% if not pendientes %}<div class="alert alert-info">No hay ventas disponibles para registrar pagos.</div>{% endif %}
+      <label class="field" for="pago_venta_id"><span>Venta</span>
+        <select id="pago_venta_id" name="venta_id" required {% if 'venta_id' in campos_error %}aria-invalid="true"{% endif %}>
+          <option value="">Selecciona una venta con saldo</option>
+          {% if valores.get('venta_id') and not elegida %}<option value="{{ valores.get('venta_id') }}" selected>Venta no disponible para pago; selecciona otra</option>{% endif %}
+          {% for v in pendientes %}
+            <option value="{{ v.id }}" {{ 'selected' if valores.get('venta_id')==v.id|string }}
+                    data-total="{{ v.total_centavos|dinero }}" data-pagado="{{ v.pagado_centavos|dinero }}" data-saldo="{{ (v.total_centavos-v.pagado_centavos)|dinero }}">
+              {{ v.referencia }} · {{ v.remitente_nombre }} · Saldo {{ (v.total_centavos-v.pagado_centavos)|dinero }}
+            </option>
+          {% endfor %}
+        </select>
+        <small>Solo ventas activas, con saldo pendiente y sin guía emitida.</small>
+      </label>
+      <dl class="payment-summary" aria-live="polite">
+        <div><dt>Total de la venta</dt><dd id="pago-total">{{ elegida.total_centavos|dinero if elegida else '—' }}</dd></div>
+        <div><dt>Pagos registrados</dt><dd id="pago-pagado">{{ elegida.pagado_centavos|dinero if elegida else '—' }}</dd></div>
+        <div><dt>Saldo pendiente</dt><dd id="pago-saldo">{{ (elegida.total_centavos-elegida.pagado_centavos)|dinero if elegida else '—' }}</dd></div>
+      </dl>
+    </section>
+    <section class="panel form-panel">
+      <h2><span class="step">2</span>Datos del pago</h2>
+      <div class="form-grid">
+        <label class="field" for="medio"><span>Medio de pago</span>
+          <select id="medio" name="medio" required {% if 'medio' in campos_error %}aria-invalid="true"{% endif %}>
+            {% if valores.get('medio','') not in ['EFECTIVO','TARJETA','TRANSFERENCIA'] %}<option value="{{ valores.get('medio','') }}" selected>Selecciona un medio válido</option>{% endif %}
+            {% for valor,nombre in [('EFECTIVO','Efectivo'),('TARJETA','Tarjeta'),('TRANSFERENCIA','Transferencia')] %}<option value="{{ valor }}" {{ 'selected' if valores.get('medio')==valor }}>{{ nombre }}</option>{% endfor %}
+          </select>
+        </label>
+        {{ entrada('importe_cop','Importe (COP)','inputmode="decimal" maxlength="24" placeholder="50000"','Valor positivo, sin separadores de miles. Hasta 2 decimales.') }}
+      </div>
+      {{ entrada('referencia','Referencia del pago','minlength="4" maxlength="48" pattern="[A-Za-z0-9-]{4,48}" placeholder="PAGO-001"','Entre 4 y 48 letras, números o guiones. Debe ser única para el medio de pago.') }}
+      <div class="form-actions"><p>El importe no puede superar el saldo pendiente.</p><button class="button" type="submit" {{ 'disabled' if not pendientes }}>Registrar pago</button></div>
+    </section>
+  </form>
+  <aside class="registration-aside">
+    <section class="panel summary-box">
+      <h2>Registro de pagos</h2>
+      <ul class="check-list"><li>Puedes registrar abonos con distintos medios.</li><li>El pago actualiza el saldo de la venta.</li><li>La guía se registra cuando el pago está completo.</li></ul>
+      <p class="muted">Todos los valores están expresados en pesos colombianos (COP). Este registro no efectúa cobros bancarios.</p>
+    </section>
+  </aside>
+</div>

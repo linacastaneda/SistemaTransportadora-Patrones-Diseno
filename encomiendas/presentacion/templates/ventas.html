@@ -1,52 +1,42 @@
 {% extends "base.html" %}
-{% block titulo %}Ventas disponibles{% endblock %}
+{% block titulo %}Ventas y pagos{% endblock %}
 {% block contenido %}
   <div class="page-heading">
-    <div>
-      <p class="eyebrow">OPERACIONES / REFERENCIAS COMERCIALES</p>
-      <h1>Ventas disponibles</h1>
-      <p class="muted">Consulta el pago y la vinculación de la venta con una guía.</p>
-    </div>
+    <div><p class="eyebrow">GESTIÓN COMERCIAL / VENTAS Y PAGOS</p><h1>Ventas y pagos</h1><p class="muted">Consulta ventas, registra abonos y verifica el saldo antes de emitir la guía.</p></div>
+    {% if g.actor.rol=='coordinador' %}<a class="button" href="{{ url_for('operaciones.registrar_pago') }}">Registrar pago</a>{% endif %}
   </div>
-  <div class="alert alert-info">Catálogo de demostración. Este módulo consulta ventas y pagos; no realiza cobros ni se conecta con pasarelas de pago.</div>
   <section class="panel">
+    <div class="panel-heading"><div><h2>Consulta de ventas</h2><p>{{ ventas|length }} resultados · Valores en pesos colombianos (COP)</p></div></div>
+    <nav class="filter-tabs" aria-label="Filtrar ventas">
+      {% for valor,nombre in [('', 'Todas'),('pendientes','Con saldo'),('listas','Listas para guía'),('vinculadas','Con guía')] %}
+        <a class="{{ 'active' if estado==valor }}" {% if estado==valor %}aria-current="page"{% endif %} href="{{ url_for('web.ventas',estado=valor) }}">{{ nombre }}</a>
+      {% endfor %}
+    </nav>
     <div class="table-wrap">
       <table>
-        <thead>
-          <tr>
-            <th>Venta</th>
-            <th>Remitente y trayecto</th>
-            <th>Total</th>
-            <th>Pago válido</th>
-            <th>Vinculación</th>
-            <th>Acción</th>
-          </tr>
-        </thead>
+        <thead><tr><th>Venta</th><th>Remitente y trayecto</th><th>Total</th><th>Pagado</th><th>Saldo</th><th>Situación</th><th>Acción</th></tr></thead>
         <tbody>
           {% for v in ventas %}
+            {% set saldo = v.total_centavos-v.pagado_centavos %}
             <tr>
               <td class="reference">{{ v.referencia }}</td>
-              <td>
-                {{ v.remitente_nombre }}<small> {{ v.origen }} / {{ v.destino }}</small>
-              </td>
+              <td>{{ v.remitente_nombre }}<small>{{ v.origen }} / {{ v.destino }}</small></td>
               <td class="nowrap">{{ v.total_centavos|dinero }}</td>
+              <td class="nowrap">{{ v.pagado_centavos|dinero }}</td>
+              <td class="nowrap {{ 'text-success' if saldo==0 else 'text-warning' }}">{{ saldo|dinero }}</td>
+              <td>{% if not v.activa %}<span class="tag">Inactiva</span>{% elif v.guia_numero %}<span class="tag">{{ v.guia_numero }}</span>{% elif saldo==0 %}<span class="status status-entregado">Pagada</span>{% else %}<span class="status status-recibido">Pago pendiente</span>{% endif %}</td>
               <td>
-                <span class="{{ 'text-success' if v.pagado_centavos==v.total_centavos else 'text-warning' }}">
-                {{ 'Completo' if v.pagado_centavos==v.total_centavos else 'Pendiente' }}</span>
-                <small>{{ v.pagado_centavos|dinero }}</small>
-              </td>
-              <td>{{ v.guia_numero or 'Sin guía' }}</td>
-              <td>
-                {% if not v.guia_numero %}
-                  <a href="{{ url_for('web.nueva',venta_id=v.id) }}">Usar venta</a>
-                {% else %}
-                  <span class="muted">Registrada</span>
-                {% endif %}
+                {% if v.activa and not v.guia_numero and saldo>0 and g.actor.rol=='coordinador' %}<a class="nowrap" href="{{ url_for('operaciones.registrar_pago',venta_id=v.id) }}">Registrar pago</a>
+                {% elif v.activa and not v.guia_numero and saldo==0 %}<a class="nowrap" href="{{ url_for('web.nueva',venta_id=v.id) }}">Registrar encomienda</a>
+                {% elif v.guia_numero %}<span class="muted">Guía emitida</span>
+                {% elif not v.activa %}<span class="muted">No disponible</span>
+                {% else %}<span class="muted">Requiere coordinación</span>{% endif %}
               </td>
             </tr>
-          {% endfor %}
+          {% else %}<tr><td colspan="7" class="empty">No hay ventas que coincidan con el filtro.</td></tr>{% endfor %}
         </tbody>
       </table>
     </div>
   </section>
+  <p class="page-note">Ventas de demostración. El registro de pagos actualiza su saldo; no se conecta a pasarelas ni realiza cobros bancarios.</p>
 {% endblock %}

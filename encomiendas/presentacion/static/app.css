@@ -246,7 +246,7 @@ p+p {
   font-size: 12px
 }
 
-main#contenido {
+.workspace main#contenido {
   padding: 32px 36px 24px;
   max-width: 1600px;
   width: 100%;
@@ -1118,7 +1118,7 @@ td small {
 }
 
 @media(min-width:1500px) {
-  main#contenido {
+  .workspace main#contenido {
     padding-left: 45px;
     padding-right: 45px
   }
@@ -1133,7 +1133,7 @@ td small {
     margin-left: 200px
   }
 
-  main#contenido {
+  .workspace main#contenido {
     padding: 27px 25px
   }
 
@@ -1271,7 +1271,7 @@ td small {
     width: 100%
   }
 
-  main#contenido {
+  .workspace main#contenido {
     padding: 25px 16px
   }
 
@@ -1503,4 +1503,56 @@ td small {
   .print-mode main#contenido {
     max-width: none
   }
+}
+
+.skip-link {
+  position: fixed;
+  top: -80px;
+  left: 16px;
+  z-index: 30;
+  background: white;
+  padding: 12px 18px;
+  border: 2px solid var(--navy)
+}
+
+.skip-link:focus { top: 12px }
+.sidebar { overflow-y: auto }
+.overview-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px }
+.operation-list { padding: 0 22px }
+.operation-row { display: flex; justify-content: space-between; gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--line); font-size: 12px }
+.operation-row:last-child { border-bottom: none }
+.operation-row p { margin-top: 4px }
+.operation-row small { display: block; margin-top: 4px; font-size: 11px; color: var(--muted) }
+.operation-value { text-align: right; flex-shrink: 0 }
+.operation-value a { display: block; margin-top: 5px; font-size: 11px }
+.panel-bottom { border-top: 1px solid var(--line); padding: 14px 22px }
+.status-summary { display: flex; flex-wrap: wrap; gap: 10px 25px; padding: 16px 22px; border-bottom: 1px solid var(--line); font-size: 12px }
+.status-summary strong { margin-left: 6px; color: var(--ink) }
+.filter-tabs { display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 18px; border-bottom: 1px solid var(--line) }
+.filter-tabs a { padding: 7px 12px; border-radius: 3px; font-size: 12px; color: var(--muted); text-decoration: none }
+.filter-tabs a:hover { background: #eef2f5 }
+.filter-tabs a.active { background: var(--navy); color: white }
+.filter-tabs.standalone { margin: 0 0 22px; background: white; border: 1px solid var(--line); border-radius: 4px }
+.page-note { font-size: 12px; color: var(--muted); margin-bottom: 18px }
+.payment-summary { margin: 10px 0 0; padding: 18px; background: #f6f8f9; border: 1px solid var(--line); display: grid; gap: 16px; grid-template-columns: repeat(3, 1fr) }
+.payment-summary dt { color: var(--muted); font-size: 11px }
+.payment-summary dd { margin: 5px 0 0; font-size: 15px; font-weight: 600; overflow-wrap: anywhere }
+.payment-summary>div:last-child dd { color: var(--blue) }
+.field [aria-invalid="true"] { border: 2px solid var(--red); background: #fffafa }
+.error-reference { display: block; font-size: 11px; margin-top: 6px }
+
+@media(max-width:1100px) {
+  .overview-grid { grid-template-columns: 1fr; gap: 0 }
+}
+
+@media(max-width:680px) {
+  .operation-list { padding: 0 17px }
+  .operation-row { gap: 12px; font-size: 11px }
+  .operation-value { max-width: 45% }
+  .operation-value strong { overflow-wrap: anywhere }
+  .payment-summary { grid-template-columns: 1fr; gap: 12px }
+  .filter-tabs { padding: 10px }
+  .filter-tabs a { padding: 8px 10px }
+  .status-summary { padding: 16px }
+  .public-main#contenido { padding: 0 }
 }

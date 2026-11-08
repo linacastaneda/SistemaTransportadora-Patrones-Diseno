@@ -2,6 +2,8 @@ from decimal import Decimal, InvalidOperation
 
 from encomiendas.aplicacion.dominio.errores import ErrorNegocio
 from encomiendas.aplicacion.dominio.modelos import SolicitudRegistro
+from encomiendas.aplicacion.casos_uso.programacion_viaje import ProgramacionViaje
+from encomiendas.aplicacion.casos_uso.registro_pago import RegistroPago
 
 
 def entero(valor, etiqueta):
@@ -57,4 +59,28 @@ def leer_solicitud(datos):
         alto_cm=entero(texto("alto_cm"), "Alto"),
         valor_centavos=escalar(texto("valor_declarado"), 100, "Valor declarado"),
         observaciones=texto("observaciones"),
+    )
+
+
+def leer_programacion(datos):
+    #La presentación convierte las unidades; el caso de uso conserva su contrato entero.
+    return ProgramacionViaje(
+        codigo=datos.get("codigo", "").strip(),
+        origen_id=entero(datos.get("origen_id", ""), "Origen"),
+        destino_id=entero(datos.get("destino_id", ""), "Destino"),
+        fecha_salida=datos.get("fecha_salida", "").strip(),
+        placa=datos.get("placa", "").strip(),
+        conductor=datos.get("conductor", "").strip(),
+        ayudante=datos.get("ayudante", "").strip(),
+        peso_maximo_g=escalar(datos.get("peso_maximo_kg", ""), 1000, "Capacidad en kg"),
+        volumen_maximo_cm3=escalar(datos.get("volumen_maximo_m3", ""), 1000000, "Capacidad en m³"),
+    )
+
+
+def leer_pago(datos):
+    return RegistroPago(
+        venta_id=entero(datos.get("venta_id", ""), "Venta"),
+        medio=datos.get("medio", "").strip().upper(),
+        referencia=datos.get("referencia", "").strip(),
+        importe_centavos=escalar(datos.get("importe_cop", ""), 100, "Importe en COP"),
     )

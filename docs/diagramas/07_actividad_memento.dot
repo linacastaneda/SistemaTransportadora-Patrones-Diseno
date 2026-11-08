@@ -1,0 +1,24 @@
+digraph G {
+graph [rankdir=TB,bgcolor="white",pad="0.15",nodesep="0.25",ranksep="0.45",dpi=200];
+node [shape=plain,fontname="Arial",fontsize=11];
+edge [fontname="Arial",fontsize=9,arrowsize=0.8];
+a [shape=circle,style=filled,fillcolor=black,width=0.14,height=0.14,fixedsize=true,label="",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+b [shape=diamond,label="¿Operación?",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+c [shape=box,style=rounded,label="Crear recuerdo anterior;\nvalidar y editar",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+d [shape=box,style=rounded,label="Guardar recuerdo solo\nsi la edición es válida",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+e [shape=box,style=rounded,label="Consultar último recuerdo\ndel mismo borrador",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+f [shape=box,style=rounded,label="Restaurar; consumir recuerdo\nsolo si tuvo éxito",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+g [shape=box,style=rounded,label="Volver a validar con Chain\ny guardar guía",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+h [shape=box,style=rounded,label="Cerrar borrador y vaciar\nhistorial tras confirmar",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+z [shape=doublecircle,style=filled,fillcolor=black,width=0.14,height=0.14,fixedsize=true,label="",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+a -> b [arrowhead=vee,label=""];
+b -> c [arrowhead=vee,label="Editar"];
+c -> d [arrowhead=vee,label=""];
+d -> z [arrowhead=vee,label=""];
+b -> e [arrowhead=vee,label="Deshacer"];
+e -> f [arrowhead=vee,label=""];
+f -> z [arrowhead=vee,label=""];
+b -> g [arrowhead=vee,label="Confirmar"];
+g -> h [arrowhead=vee,label=""];
+h -> z [arrowhead=vee,label=""];
+}

@@ -1,15 +1,21 @@
 {% extends "base.html" %}
 {% from 'macros.html' import csrf %}
-{% block titulo %}Viajes y despachos{% endblock %}
+{% block titulo %}Transporte{% endblock %}
 {% block contenido %}
   <div class="page-heading">
     <div>
-      <p class="eyebrow">OPERACIONES / TRANSPORTE</p>
-      <h1>Viajes y despachos</h1>
+      <p class="eyebrow">TRANSPORTE / VIAJES Y DESPACHOS</p>
+      <h1>Transporte</h1>
       <p class="muted">Disponibilidad de carga, autorización de salida y llegada a destino.</p>
     </div>
+    {% if g.actor.rol=="coordinador" %}<a class="button" href="{{ url_for('operaciones.programar_viaje') }}">Programar viaje</a>{% endif %}
   </div>
   <div class="alert alert-info">La llegada del viaje se registra después de despachar todas sus guías. Luego se recibe cada encomienda en su detalle.</div>
+  <nav class="filter-tabs standalone" aria-label="Filtrar viajes">
+    {% for valor,nombre in [('', 'Todos'),('abiertos','Recepción abierta'),('por_autorizar','Por autorizar salida'),('finalizados','Llegada registrada')] %}
+      <a class="{{ 'active' if estado==valor }}" {% if estado==valor %}aria-current="page"{% endif %} href="{{ url_for('web.viajes',estado=valor) }}">{{ nombre }}</a>
+    {% endfor %}
+  </nav>
   {% for v in viajes %}
     <section class="panel trip-panel">
       <div class="panel-heading">
@@ -17,23 +23,23 @@
           <h2>
             {{ v.codigo }} <span class="muted">{{ v.origen }} / {{ v.destino }}</span>
           </h2>
-          <p>Vehículo {{ v.placa }} · Fecha programada {{ v.fecha_salida }}</p>
+          <p>Vehículo {{ v.placa }} · Fecha programada {{ v.fecha_salida|fecha_local }}</p>
         </div>
         <span class="tag">
-        {{ 'Llegada registrada' if v.llegada_registrada else 'Recepción abierta' if v.recibe_carga else 'En operación' }}</span>
+        {{ 'Inactivo' if not v.activo else 'Llegada registrada' if v.llegada_registrada else 'Recepción abierta' if v.recibe_carga else 'En operación' }}</span>
       </div>
       <div class="trip-body">
         <dl class="trip-facts">
           <div>
             <dt>Carga asignada</dt>
             <dd>
-              {{ '%.3f'|format(v.peso_ocupado_g/1000) }} / {{ '%.0f'|format(v.peso_maximo_g/1000) }} kg
+              {{ v.peso_ocupado_g|cantidad(1000) }} / {{ v.peso_maximo_g|cantidad(1000) }} kg
             </dd>
           </div>
           <div>
             <dt>Volumen asignado</dt>
             <dd>
-              {{ '%.3f'|format(v.volumen_ocupado_cm3/1000000) }} / {{ '%.3f'|format(v.volumen_maximo_cm3/1000000) }} m³
+              {{ v.volumen_ocupado_cm3|cantidad(1000000) }} / {{ v.volumen_maximo_cm3|cantidad(1000000) }} m³
             </dd>
           </div>
           <div>
@@ -53,7 +59,7 @@
           <span>Conductor: {{ v.conductor or 'Sin asignar' }}</span>
           <span>Ayudante: {{ v.ayudante or 'Sin asignar' }}</span>
         </div>
-        {% if g.actor.rol=="coordinador" and not v.llegada_registrada %}
+        {% if g.actor.rol=="coordinador" and v.activo and not v.llegada_registrada %}
           <div class="trip-actions">
             {% if not v.salida_autorizada %}
               <form method="post"
@@ -72,5 +78,6 @@
         {% endif %}
       </div>
     </section>
+  {% else %}<section class="panel"><p class="empty">No hay viajes que coincidan con el filtro.</p></section>
   {% endfor %}
 {% endblock %}

@@ -1,7 +1,7 @@
 [project]
-name = "encomiendas-profesional"
-version = "1.0.0"
-description = "Registro y seguimiento de encomiendas con Chain of Responsibility y State"
+name = "sistema-transporte-encomiendas"
+version = "1.1.0"
+description = "Gestión de viajes, pagos y encomiendas en tres capas con Chain of Responsibility y State"
 requires-python = ">=3.11"
 
 [tool.pytest.ini_options]

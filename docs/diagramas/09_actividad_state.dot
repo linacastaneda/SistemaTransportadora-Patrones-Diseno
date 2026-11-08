@@ -1,0 +1,19 @@
+digraph G {
+graph [rankdir=TB,bgcolor="white",pad="0.15",nodesep="0.25",ranksep="0.45",dpi=200];
+node [shape=plain,fontname="Arial",fontsize=11];
+edge [fontname="Arial",fontsize=9,arrowsize=0.8];
+a [shape=circle,style=filled,fillcolor=black,width=0.14,height=0.14,fixedsize=true,label="",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+b [shape=box,style=rounded,label="Autorizar actor; cargar guía, versión y viaje",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+c [shape=box,style=rounded,label="Delegar operación al estado vigente",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+d [shape=diamond,label="¿Acción y condiciones válidas?",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+e [shape=box,style=rounded,label="Guardar nuevo estado y evento; confirmar",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+x [shape=box,style=rounded,label="Rechazar sin cambios persistentes",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+z [shape=doublecircle,style=filled,fillcolor=black,width=0.14,height=0.14,fixedsize=true,label="",fontname="Arial",fontsize=11,margin="0.12,0.08"];
+a -> b [arrowhead=vee,label=""];
+b -> c [arrowhead=vee,label=""];
+c -> d [arrowhead=vee,label=""];
+d -> e [arrowhead=vee,label="Sí"];
+d -> x [arrowhead=vee,label="No"];
+e -> z [arrowhead=vee,label=""];
+x -> z [arrowhead=vee,label=""];
+}

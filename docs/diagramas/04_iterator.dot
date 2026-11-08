@@ -1,0 +1,17 @@
+digraph G {
+graph [rankdir=TB,bgcolor="white",pad="0.15",nodesep="0.25",ranksep="0.45",dpi=200];
+node [shape=plain,fontname="Arial",fontsize=11];
+edge [fontname="Arial",fontsize=9,arrowsize=0.8];
+a [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>«interfaz» ColeccionEncomiendas</B></TD></TR><TR><TD ALIGN="LEFT">+crear_iterador(): IteradorEncomiendas<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+m [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ManifiestoViaje</B></TD></TR><TR><TD ALIGN="LEFT">-viaje_id: int<BR ALIGN="LEFT"/>-elementos: tuple<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+crear_iterador()<BR ALIGN="LEFT"/>+cantidad(): int<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+i [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>«interfaz» IteradorEncomiendas</B></TD></TR><TR><TD ALIGN="LEFT">+hay_siguiente(): bool<BR ALIGN="LEFT"/>+siguiente(): ResumenEncomienda<BR ALIGN="LEFT"/>+reiniciar()<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+it [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>IteradorManifiesto</B></TD></TR><TR><TD ALIGN="LEFT">-elementos: tuple<BR ALIGN="LEFT"/>-posicion: int<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+hay_siguiente(): bool<BR ALIGN="LEFT"/>+siguiente(): ResumenEncomienda<BR ALIGN="LEFT"/>+reiniciar()<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+r [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ResumenEncomienda</B></TD></TR><TR><TD ALIGN="LEFT">+numero: str<BR ALIGN="LEFT"/>+destino: str<BR ALIGN="LEFT"/>+peso_g: int<BR ALIGN="LEFT"/>+estado: str<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+s [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ServicioManifiesto</B></TD></TR><TR><TD ALIGN="LEFT">+crear_uow: callable<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+consultar(actor_id, viaje_id)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+m -> a [arrowhead=empty,style=dashed,label=""];
+it -> i [arrowhead=empty,style=dashed,label=""];
+s -> a [arrowhead=vee,label="usa"];
+m -> it [arrowhead=vee,style=dashed,label="crea"];
+m -> r [arrowhead=vee,label="elementos 0..*"];
+it -> r [arrowhead=vee,style=dashed,label="devuelve"];
+}

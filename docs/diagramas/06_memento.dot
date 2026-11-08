@@ -1,0 +1,15 @@
+digraph G {
+graph [rankdir=TB,bgcolor="white",pad="0.15",nodesep="0.25",ranksep="0.45",dpi=200];
+node [shape=plain,fontname="Arial",fontsize=11];
+edge [fontname="Arial",fontsize=9,arrowsize=0.8];
+b [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>BorradorGuia</B></TD></TR><TR><TD ALIGN="LEFT">-_id: str<BR ALIGN="LEFT"/>-_propietario_id: int<BR ALIGN="LEFT"/>-_abierto: bool<BR ALIGN="LEFT"/>-_datos: dict<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+editar(cambios)<BR ALIGN="LEFT"/>+crear_recuerdo(etiqueta)<BR ALIGN="LEFT"/>+restaurar(recuerdo)<BR ALIGN="LEFT"/>+cerrar()<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+m [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>MementoGuia</B></TD></TR><TR><TD ALIGN="LEFT">-_borrador_id: str<BR ALIGN="LEFT"/>-_fecha: str<BR ALIGN="LEFT"/>-_etiqueta: str<BR ALIGN="LEFT"/>-_datos: dict<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+id_borrador(): str<BR ALIGN="LEFT"/>+fecha(): str<BR ALIGN="LEFT"/>+etiqueta(): str<BR ALIGN="LEFT"/>-_contenido_para(originador)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+r [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>«interfaz» RecuerdoBorrador</B></TD></TR><TR><TD ALIGN="LEFT">+id_borrador(): str<BR ALIGN="LEFT"/>+fecha(): str<BR ALIGN="LEFT"/>+etiqueta(): str<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+h [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>HistorialBorrador</B></TD></TR><TR><TD ALIGN="LEFT">-_recuerdos: list<BR ALIGN="LEFT"/>-_limite: int<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+guardar(recuerdo)<BR ALIGN="LEFT"/>+consultar_ultimo()<BR ALIGN="LEFT"/>+consumir_ultimo()<BR ALIGN="LEFT"/>+vaciar()<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+s [label=<<TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="5"><TR><TD BGCOLOR="#eeeeee"><B>ServicioBorrador</B></TD></TR><TR><TD ALIGN="LEFT">+historial: HistorialBorrador<BR ALIGN="LEFT"/></TD></TR><TR><TD ALIGN="LEFT">+editar(actor_id, id, cambios)<BR ALIGN="LEFT"/>+deshacer(actor_id, id)<BR ALIGN="LEFT"/>+confirmar(actor_id, id)<BR ALIGN="LEFT"/></TD></TR></TABLE>>];
+m -> r [arrowhead=empty,style=dashed,label=""];
+b -> m [arrowhead=vee,style=dashed,label="crea / restaura"];
+h -> r [arrowhead=vee,label="recuerdos 0..*"];
+s -> h [arrowhead=vee,label="coordina"];
+s -> b [arrowhead=vee,label="autoriza y opera"];
+}

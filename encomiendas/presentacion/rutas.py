@@ -90,12 +90,23 @@ def inicio():
     consulta = servicios()["consultas"]
     guias, total = consulta.listar(g.actor.id, limite=6)
     catalogos = consulta.catalogos(g.actor.id)
+    abiertos = [v for v in catalogos["viajes"] if v["activo"] and v["recibe_carga"]]
+    pendientes = [
+        v for v in catalogos["ventas"]
+        if v["activa"] and not v["guia_numero"] and v["pagado_centavos"] < v["total_centavos"]
+    ]
     return render_template(
         "inicio.html",
         guias=guias,
         total=total,
         indicadores=consulta.indicadores(g.actor.id),
         viajes=catalogos["viajes"],
+        abiertos=abiertos,
+        ventas_pendientes=pendientes,
+        por_autorizar=sum(
+            1 for v in catalogos["viajes"]
+            if v["activo"] and not v["salida_autorizada"] and not v["llegada_registrada"]
+        ),
         fecha_hoy=datetime.now(ZoneInfo("America/Bogota")).strftime("%d/%m/%Y"),
     )
 
@@ -226,7 +237,18 @@ def transicion(guia_id, accion):
 
 @web.get("/viajes")
 def viajes():
-    return render_template("viajes.html", **servicios()["consultas"].catalogos(g.actor.id))
+    catalogos = servicios()["consultas"].catalogos(g.actor.id)
+    estado = request.args.get("estado", "")
+    filtros = {
+        "": lambda v: True,
+        "abiertos": lambda v: v["activo"] and v["recibe_carga"],
+        "por_autorizar": lambda v: v["activo"] and not v["salida_autorizada"] and not v["llegada_registrada"],
+        "finalizados": lambda v: v["llegada_registrada"],
+    }
+    if estado not in filtros:
+        raise ErrorNegocio("FILTRO_INVALIDO", "El filtro de viajes no es válido.", 400)
+    catalogos["viajes"] = [v for v in catalogos["viajes"] if filtros[estado](v)]
+    return render_template("viajes.html", **catalogos, estado=estado)
 
 
 @web.post("/viajes/<int:viaje_id>/<accion>")
@@ -238,4 +260,15 @@ def operar_viaje(viaje_id, accion):
 
 @web.get("/ventas")
 def ventas():
-    return render_template("ventas.html", **servicios()["consultas"].catalogos(g.actor.id))
+    catalogos = servicios()["consultas"].catalogos(g.actor.id)
+    estado = request.args.get("estado", "")
+    filtros = {
+        "": lambda v: True,
+        "pendientes": lambda v: v["activa"] and not v["guia_numero"] and v["pagado_centavos"] < v["total_centavos"],
+        "listas": lambda v: v["activa"] and not v["guia_numero"] and v["pagado_centavos"] == v["total_centavos"],
+        "vinculadas": lambda v: bool(v["guia_numero"]),
+    }
+    if estado not in filtros:
+        raise ErrorNegocio("FILTRO_INVALIDO", "El filtro de ventas no es válido.", 400)
+    catalogos["ventas"] = [v for v in catalogos["ventas"] if filtros[estado](v)]
+    return render_template("ventas.html", **catalogos, estado=estado)

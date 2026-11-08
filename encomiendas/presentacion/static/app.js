@@ -22,3 +22,15 @@ if (source && select) {
     document.getElementById('viaje_id').value = '';
   });
 }
+
+const ventaPago = document.getElementById('pago_venta_id');
+if (ventaPago) {
+  ventaPago.addEventListener('change', () => {
+    const opcion = ventaPago.selectedOptions[0];
+    ['total', 'pagado', 'saldo'].forEach(campo => {
+      document.getElementById(`pago-${campo}`).textContent = opcion?.dataset[campo] || '—';
+    });
+  });
+}
+
+document.querySelector('[data-form-error]')?.focus();

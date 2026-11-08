@@ -3,49 +3,39 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>{% block titulo %}Encomiendas{% endblock %} | Gestión operativa</title>
+    <title>{% block titulo %}Inicio{% endblock %} | Sistema de transporte y encomiendas</title>
     <link rel="stylesheet" href="{{ url_for('static',filename='app.css') }}">
     <script src="{{ url_for('static',filename='app.js') }}" defer></script>
   </head>
   <body class="{% if not g.actor %}publico{% endif %} {% if impresion %}print-mode{% endif %}">
     {% from 'macros.html' import csrf %}
+    <a class="skip-link" href="#contenido">Ir al contenido</a>
     {% if g.actor %}
+      {% set transporte = request.endpoint in ['web.viajes','web.operar_viaje','operaciones.programar_viaje'] %}
+      {% set comercial = request.endpoint in ['web.ventas','operaciones.registrar_pago'] %}
+      {% set envios = request.endpoint in ['web.guias','web.nueva','web.detalle','web.imprimir','web.transicion'] %}
       <aside class="sidebar" aria-label="Navegación principal">
         <a class="brand" href="{{ url_for('web.inicio') }}">
-          <span class="brand-mark">E</span>
-          <span>Encomiendas<small>GESTIÓN OPERATIVA</small>
-          </span>
+          <span class="brand-mark">T</span>
+          <span>Transporte<small>Y ENCOMIENDAS</small></span>
         </a>
-        <div class="nav-label">Operación</div>
+        <div class="nav-label">Gestión operativa</div>
         <nav>
-          <a class="{{ 'active' if request.endpoint=='web.inicio' }}"
-             href="{{ url_for('web.inicio') }}">Resumen</a>
-          <a class="{{ 'active' if request.endpoint in ['web.guias','web.detalle','web.imprimir'] }}"
-             href="{{ url_for('web.guias') }}">Guías de envío</a>
-          <a class="{{ 'active' if request.endpoint=='web.nueva' }}"
-             href="{{ url_for('web.nueva') }}">Registrar encomienda</a>
-          <a class="{{ 'active' if request.endpoint=='web.viajes' }}"
-             href="{{ url_for('web.viajes') }}">Viajes y despachos</a>
-          <a class="{{ 'active' if request.endpoint=='web.ventas' }}"
-             href="{{ url_for('web.ventas') }}">Ventas disponibles</a>
-          <a class="{{ 'active' if request.endpoint and request.endpoint.startswith('operaciones.') }}" href="{{ url_for('operaciones.inicio') }}">Programar viajes y pagos</a>
+          <a class="{{ 'active' if request.endpoint=='web.inicio' }}" {% if request.endpoint=='web.inicio' %}aria-current="page"{% endif %} href="{{ url_for('web.inicio') }}">Inicio</a>
+          <a class="{{ 'active' if transporte }}" {% if transporte %}aria-current="page"{% endif %} href="{{ url_for('web.viajes') }}">Transporte</a>
+          <a class="{{ 'active' if comercial }}" {% if comercial %}aria-current="page"{% endif %} href="{{ url_for('web.ventas') }}">Ventas y pagos</a>
+          <a class="{{ 'active' if envios }}" {% if envios %}aria-current="page"{% endif %} href="{{ url_for('web.guias') }}">Encomiendas</a>
         </nav>
         <div class="sidebar-bottom">
           <span class="environment">ENTORNO ACADÉMICO</span>
-          <p>
-            Datos de demostración.
-            <br>
-            Operación local.
-          </p>
+          <p>Datos de demostración.<br>Operación local.</p>
         </div>
       </aside>
       <div class="workspace">
         <header class="topbar">
-          <span>Control de encomiendas</span>
+          <span>Sistema de transporte y encomiendas</span>
           <div class="account">
-            <div>
-              {{ g.actor.nombre }}<small> {{ 'Coordinación de operaciones' if g.actor.rol=='coordinador' else 'Operador de sucursal' }}</small>
-            </div>
+            <div>{{ g.actor.nombre }}<small>{{ 'Coordinación de operaciones' if g.actor.rol=='coordinador' else 'Operador de sucursal' }}</small></div>
             <form method="post" action="{{ url_for('web.salir') }}">
               {{ csrf() }}<button class="link-button" type="submit">Salir</button>
             </form>
@@ -53,18 +43,16 @@
         </header>
         <main id="contenido">
     {% else %}
-      <main class="public-main">
+      <main id="contenido" class="public-main">
     {% endif %}
     {% for categoria,mensaje in get_flashed_messages(with_categories=true) %}
       <div class="alert alert-{{ categoria }}" role="status">{{ mensaje }}</div>
     {% endfor %}
     {% block contenido %}{% endblock %}
-  </main>
-  {% if g.actor %}
-    <footer class="footer">
-      Sistema de gestión de encomiendas<span>Fechas y horas: Colombia (UTC−5)</span>
-    </footer>
-    </div>
-  {% endif %}
-</body>
+    </main>
+    {% if g.actor %}
+      <footer class="footer">Sistema de transporte y encomiendas<span>Fechas y horas: Colombia (UTC−5)</span></footer>
+      </div>
+    {% endif %}
+  </body>
 </html>

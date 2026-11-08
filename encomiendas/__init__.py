@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from decimal import Decimal
 import os
 from pathlib import Path
 import secrets
@@ -83,7 +84,22 @@ def create_app(config=None):
 
     @app.template_filter("dinero")
     def dinero(centavos):
-        return "$ " + f"{centavos/100:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+        return "$ " + f"{Decimal(centavos)/100:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+    @app.template_filter("cantidad")
+    def cantidad(valor, escala=1):
+        #Se muestran todas las cifras útiles: un cm³ no debe verse como cero m³.
+        texto = format(Decimal(valor) / Decimal(escala), "f")
+        if "." in texto:
+            texto = texto.rstrip("0").rstrip(".")
+        return texto.replace(".", ",")
+
+    @app.template_filter("fecha_local")
+    def fecha_local(valor):
+        fecha = datetime.fromisoformat(valor)
+        if fecha.tzinfo is not None:
+            fecha = fecha.astimezone(ZoneInfo("America/Bogota"))
+        return fecha.strftime("%d/%m/%Y" if len(valor) == 10 else "%d/%m/%Y %H:%M")
 
     @app.template_filter("fecha")
     def fecha(valor):
